@@ -1,31 +1,21 @@
 import streamlit as st
-from utils.config import load_tournament_configs
+from utils.config import render_tournament_selector
 
 st.set_page_config(
     page_title="Wasylak Golf Pools App",
     page_icon="⛳",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
+
+config = render_tournament_selector()
 
 st.title("⛳ Wasylak Golf Pools App")
 
 st.markdown("---")
 
-configs = load_tournament_configs()
-
-if not configs:
-    st.warning("No tournament configurations found.")
-    st.stop()
-
-tournament_names = {c["name"]: cid for cid, c in configs.items()}
-selected_name = st.selectbox("Select Tournament", list(tournament_names.keys()))
-selected_id = tournament_names[selected_name]
-
-st.session_state.selected_tournament_id = selected_id
-st.session_state.selected_tournament_config = configs[selected_id]
-
-st.markdown(f"### {selected_name}")
+if config:
+    st.markdown(f"### {config['name']}")
 
 st.markdown("""
 Navigate using the sidebar:
