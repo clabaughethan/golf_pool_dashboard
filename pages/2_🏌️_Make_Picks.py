@@ -1,34 +1,34 @@
 import json
 import streamlit as st
 from pathlib import Path
+from utils.config import require_tournament
 from utils.database import get_tournaments, verify_pool_code, submit_picks, get_pick
-from utils.espn_api import fetch_leaderboard
 
 st.set_page_config(page_title="Make Picks", page_icon="🏌️", layout="wide")
 
 st.title("🏌️ Make Your Picks")
 st.divider()
 
-CONFIG_DIR = Path(__file__).parent.parent / "data" / "tournaments"
+tournament_id = st.session_state.get("selected_tournament_id")
+config = require_tournament()
 
 tournaments = get_tournaments()
 if not tournaments:
     st.warning("No active tournaments found. Contact your pool host.")
     st.stop()
 
-tournament_names = {t["name"]: t["id"] for t in tournaments}
-selected_name = st.selectbox("Select Tournament", list(tournament_names.keys()))
-tournament_id = tournament_names[selected_name]
+tournament = next((t for t in tournaments if t["id"] == tournament_id), None)
+if tournament is None:
+    st.warning("Tournament not found in database.")
+    st.stop()
 
-tournament = [t for t in tournaments if t["id"] == tournament_id][0]
-
-if tournament.get("status") == "locked" or tournament.get("status") == "final":
+if tournament.get("status") in ("locked", "final"):
     st.warning("This tournament is locked. Picks can no longer be submitted or edited.")
     st.stop()
 
-config = json.loads((CONFIG_DIR / f"{tournament_id}.json").read_text()) if (CONFIG_DIR / f"{tournament_id}.json").exists() else None
-
-if config is None:
+CONFIG_DIR = Path(__file__).parent.parent / "data" / "tournaments"
+config_path = CONFIG_DIR / f"{tournament_id}.json"
+if not config_path.exists():
     st.error("Tournament configuration not found.")
     st.stop()
 
@@ -76,9 +76,7 @@ win_picks = []
 st.subheader("Win Picks")
 
 for group_num, count in rules["win_picks_per_group"].items():
-    group_players = [p["name"] for p in groups[group_num]]
     group_player_names = [p["name"] for p in groups[group_num]]
-
     defaults = [p for p in existing_win if p in group_player_names]
 
     selected = st.multiselect(

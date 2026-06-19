@@ -1,22 +1,11 @@
-import json
 import streamlit as st
-from pathlib import Path
+from utils.config import require_tournament
 
 st.set_page_config(page_title="Rules", page_icon="📋", layout="wide")
 
+config = require_tournament()
+
 st.title("📋 Pool Rules")
-
-CONFIG_DIR = Path(__file__).parent.parent / "data" / "tournaments"
-configs = sorted(CONFIG_DIR.glob("*.json"))
-
-if not configs:
-    st.warning("No tournament configurations found.")
-    st.stop()
-
-tournament_options = {json.loads(c.read_text())["name"]: c.stem for c in configs}
-selected_name = st.selectbox("Select Tournament", list(tournament_options.keys()))
-config = json.loads((CONFIG_DIR / f"{tournament_options[selected_name]}.json").read_text())
-
 st.header(config["name"])
 st.divider()
 

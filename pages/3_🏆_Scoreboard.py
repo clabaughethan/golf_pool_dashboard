@@ -2,6 +2,7 @@ import json
 import streamlit as st
 from pathlib import Path
 from streamlit_autorefresh import st_autorefresh
+from utils.config import require_tournament
 from utils.database import get_tournaments, get_picks
 from utils.espn_api import fetch_leaderboard
 from utils.scoring import calculate_pool_scores
@@ -11,25 +12,15 @@ st.set_page_config(page_title="Scoreboard", page_icon="🏆", layout="wide")
 st.title("🏆 Live Scoreboard")
 st.divider()
 
+tournament_id = st.session_state.get("selected_tournament_id")
+config = require_tournament()
+
 tournaments = get_tournaments()
 if not tournaments:
     st.warning("No active tournaments found.")
     st.stop()
 
-tournament_names = {t["name"]: t["id"] for t in tournaments}
-selected_name = st.selectbox("Select Tournament", list(tournament_names.keys()))
-tournament_id = tournament_names[selected_name]
-
-tournament = [t for t in tournaments if t["id"] == tournament_id][0]
-
-CONFIG_DIR = Path(__file__).parent.parent / "data" / "tournaments"
-config_path = CONFIG_DIR / f"{tournament_id}.json"
-
-if not config_path.exists():
-    st.error("Tournament configuration not found.")
-    st.stop()
-
-config = json.loads(config_path.read_text())
+tournament = next((t for t in tournaments if t["id"] == tournament_id), None)
 
 st_autorefresh(interval=120_000, key="leaderboard_refresh")
 
