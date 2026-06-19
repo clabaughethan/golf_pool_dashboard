@@ -1,13 +1,13 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Golf Pool Dashboard",
+    page_title="Wasylak Golf Pools App",
     page_icon="⛳",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
-st.title("⛳ Golf Pool Dashboard")
+st.title("⛳ Wasylak Golf Pools App")
 
 st.markdown("---")
 
