@@ -16,6 +16,11 @@ name_list = list(tournament_names.keys())
 current_id = st.session_state.get("selected_tournament_id")
 current_index = name_list.index(next((n for n, tid in tournament_names.items() if tid == current_id), name_list[0])) if current_id else 0
 
+active_home = (st.session_state.get("page", "Home") == "Home")
+if st.sidebar.button("🏠 Home", key="nav_Home", use_container_width=True, disabled=active_home):
+    st.session_state.page = "Home"
+    st.rerun()
+
 selected_name = st.sidebar.selectbox("Tournament", name_list, index=current_index)
 selected_id = tournament_names[selected_name]
 st.session_state.selected_tournament_id = selected_id
@@ -24,7 +29,7 @@ st.session_state.selected_tournament_config = configs[selected_id]
 st.sidebar.divider()
 st.sidebar.markdown("**Pages**")
 
-nav_items = [("🏠 Home", "Home"), ("📋 Rules", "Rules"), ("🏌️ Make Picks", "Make Picks"), ("🏆 Scoreboard", "Scoreboard")]
+nav_items = [("📋 Rules", "Rules"), ("🏌️ Make Picks", "Make Picks"), ("🏆 Scoreboard", "Scoreboard")]
 for label, key in nav_items:
     active = (st.session_state.get("page", "Home") == key)
     if st.sidebar.button(label, key=f"nav_{key}", use_container_width=True, disabled=active):
