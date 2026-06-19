@@ -28,7 +28,7 @@ st.session_state.selected_tournament_config = configs[selected_id]
 
 st.sidebar.divider()
 
-home_page = st.Page("app.py", title="Home", icon="🏠", url_path="home", default=True)
+home_page = st.Page("pages/0_🏠_Home.py", title="Home", icon="🏠", url_path="home", default=True)
 rules_page = st.Page("pages/1_📋_Rules.py", title="Rules", icon="📋", url_path="rules")
 picks_page = st.Page("pages/2_🏌️_Make_Picks.py", title="Make Picks", icon="🏌️", url_path="make-picks")
 scoreboard_page = st.Page("pages/3_🏆_Scoreboard.py", title="Scoreboard", icon="🏆", url_path="scoreboard")
