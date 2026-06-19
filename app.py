@@ -28,10 +28,33 @@ st.session_state.selected_tournament_config = configs[selected_id]
 
 st.sidebar.divider()
 
-home_page = st.Page("pages/0_🏠_Home.py", title="Home", icon="🏠", url_path="home", default=True)
-rules_page = st.Page("pages/1_📋_Rules.py", title="Rules", icon="📋", url_path="rules")
-picks_page = st.Page("pages/2_🏌️_Make_Picks.py", title="Make Picks", icon="🏌️", url_path="make-picks")
-scoreboard_page = st.Page("pages/3_🏆_Scoreboard.py", title="Scoreboard", icon="🏆", url_path="scoreboard")
+page = st.sidebar.radio(
+    "Go to",
+    ["Home", "Rules", "Make Picks", "Scoreboard"],
+    label_visibility="collapsed",
+)
 
-nav = st.navigation([home_page, rules_page, picks_page, scoreboard_page])
-nav.run()
+if page == "Home":
+    st.title("⛳ Wasylak Golf Pools App")
+    st.markdown("---")
+    st.markdown(f"### {configs[selected_id]['name']}")
+    st.markdown("""
+Navigate using the sidebar:
+
+- **Rules** — How the pool works
+- **Make Picks** — Submit your win and short picks
+- **Scoreboard** — Live leaderboard and pool standings
+""")
+    st.info("Pool code is required to submit picks. Get it from your pool host!")
+
+elif page == "Rules":
+    from views.rules import render
+    render()
+
+elif page == "Make Picks":
+    from views.picks import render
+    render()
+
+elif page == "Scoreboard":
+    from views.scoreboard import render
+    render()
