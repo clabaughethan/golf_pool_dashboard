@@ -21,7 +21,6 @@ selected_name = st.sidebar.selectbox(
     "Tournament",
     name_list,
     index=current_index,
-    key="tournament_selector",
 )
 selected_id = tournament_names[selected_name]
 st.session_state.selected_tournament_id = selected_id
