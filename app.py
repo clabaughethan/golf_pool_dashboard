@@ -37,7 +37,7 @@ st.session_state.selected_tournament_config = configs[selected_id]
 
 st.sidebar.divider()
 
-nav_items = [("📋 Rules", "Rules"), ("🏌️ Make Picks", "Make Picks"), ("🏆 Scoreboard", "Scoreboard")]
+nav_items = [("📋 Rules", "Rules"), ("🏌️ Make Picks", "Make Picks"), ("🏆 Scoreboard", "Leaderboard")]
 for label, key in nav_items:
     active = (st.session_state.get("page", "Home") == key)
     if st.sidebar.button(label, key=f"nav_{key}", use_container_width=True, disabled=active):
@@ -200,7 +200,7 @@ elif page == "Make Picks":
     else:
         st.info(f"Complete all {expected} picks to submit.")
 
-elif page == "Scoreboard":
+elif page == "Leaderboard":
     tournament_id = selected_id
 
     def get_sb():
@@ -208,7 +208,7 @@ elif page == "Scoreboard":
             st.session_state.supabase = create_client(st.secrets["supabase"]["url"], st.secrets["supabase"]["key"])
         return st.session_state.supabase
 
-    st.title("🏆 Live Scoreboard")
+    st.title("🏆 Live Leaderboard")
     st.divider()
     st_autorefresh(interval=120_000, key="refresh")
 
