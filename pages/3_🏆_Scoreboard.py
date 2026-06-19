@@ -2,14 +2,12 @@ import json
 import streamlit as st
 from pathlib import Path
 from streamlit_autorefresh import st_autorefresh
-from utils.config import render_tournament_selector, require_tournament
+from utils.config import require_tournament
 from utils.database import get_tournaments, get_picks
 from utils.espn_api import fetch_leaderboard
 from utils.scoring import calculate_pool_scores
 
 st.set_page_config(page_title="Scoreboard", page_icon="🏆", layout="wide")
-
-render_tournament_selector()
 
 st.title("🏆 Live Scoreboard")
 st.divider()

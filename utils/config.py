@@ -15,7 +15,7 @@ def load_tournament_configs():
 
 
 def render_tournament_selector():
-    """Render the tournament selector in the sidebar and update session state."""
+    """Render the tournament selector in the sidebar (above page navigation)."""
     configs = load_tournament_configs()
 
     if not configs:
@@ -30,7 +30,6 @@ def render_tournament_selector():
         next((n for n, tid in tournament_names.items() if tid == current_id), name_list[0])
     ) if current_id else 0
 
-    st.sidebar.divider()
     selected_name = st.sidebar.selectbox(
         "Tournament",
         name_list,
