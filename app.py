@@ -1,5 +1,5 @@
 import streamlit as st
-from utils.config import render_tournament_selector
+from utils.config import load_tournament_configs
 
 st.set_page_config(
     page_title="Wasylak Golf Pools App",
@@ -8,21 +8,31 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-config = render_tournament_selector()
+configs = load_tournament_configs()
+tournament_names = {c["name"]: cid for cid, c in configs.items()}
+name_list = list(tournament_names.keys())
 
-st.title("⛳ Wasylak Golf Pools App")
+current_id = st.session_state.get("selected_tournament_id")
+current_index = name_list.index(
+    next((n for n, tid in tournament_names.items() if tid == current_id), name_list[0])
+) if current_id else 0
 
-st.markdown("---")
+selected_name = st.sidebar.selectbox(
+    "Tournament",
+    name_list,
+    index=current_index,
+    key="tournament_selector",
+)
+selected_id = tournament_names[selected_name]
+st.session_state.selected_tournament_id = selected_id
+st.session_state.selected_tournament_config = configs[selected_id]
 
-if config:
-    st.markdown(f"### {config['name']}")
+st.sidebar.divider()
 
-st.markdown("""
-Navigate using the sidebar:
+home_page = st.Page("app.py", title="Home", icon="🏠", url_path="home", default=True)
+rules_page = st.Page("pages/1_📋_Rules.py", title="Rules", icon="📋", url_path="rules")
+picks_page = st.Page("pages/2_🏌️_Make_Picks.py", title="Make Picks", icon="🏌️", url_path="make-picks")
+scoreboard_page = st.Page("pages/3_🏆_Scoreboard.py", title="Scoreboard", icon="🏆", url_path="scoreboard")
 
-- **Rules** — How the pool works
-- **Make Picks** — Submit your win and short picks
-- **Scoreboard** — Live leaderboard and pool standings
-""")
-
-st.info("Pool code is required to submit picks. Get it from your pool host!")
+nav = st.navigation([home_page, rules_page, picks_page, scoreboard_page])
+nav.run()

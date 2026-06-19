@@ -1,8 +1,6 @@
 import streamlit as st
 from utils.config import require_tournament
 
-st.set_page_config(page_title="Rules", page_icon="📋", layout="wide")
-
 config = require_tournament()
 
 st.title("📋 Pool Rules")

@@ -4,8 +4,6 @@ from pathlib import Path
 from utils.config import require_tournament
 from utils.database import get_tournaments, verify_pool_code, submit_picks, get_pick
 
-st.set_page_config(page_title="Make Picks", page_icon="🏌️", layout="wide")
-
 st.title("🏌️ Make Your Picks")
 st.divider()
 

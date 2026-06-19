@@ -7,8 +7,6 @@ from utils.database import get_tournaments, get_picks
 from utils.espn_api import fetch_leaderboard
 from utils.scoring import calculate_pool_scores
 
-st.set_page_config(page_title="Scoreboard", page_icon="🏆", layout="wide")
-
 st.title("🏆 Live Scoreboard")
 st.divider()
 
