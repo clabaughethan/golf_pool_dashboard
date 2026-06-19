@@ -37,7 +37,7 @@ st.session_state.selected_tournament_config = configs[selected_id]
 
 st.sidebar.divider()
 
-nav_items = [("📋 Rules", "Rules"), ("🏌️ Make Picks", "Make Picks"), ("🏆 Scoreboard", "Leaderboard")]
+nav_items = [("📋 Rules", "Rules"), ("🏌️ Make Picks", "Make Picks"), ("🏆 Leaderboard", "Leaderboard")]
 for label, key in nav_items:
     active = (st.session_state.get("page", "Home") == key)
     if st.sidebar.button(label, key=f"nav_{key}", use_container_width=True, disabled=active):
@@ -57,7 +57,7 @@ Navigate using the sidebar:
 
 - **Rules** — How the pool works
 - **Make Picks** — Submit your win and short picks
-- **Scoreboard** — Live leaderboard and pool standings
+- **Leaderboard** — Live leaderboard and pool standings
 """)
     st.info("Pool code is required to submit picks. Get it from your pool host!")
 
