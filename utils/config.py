@@ -30,6 +30,7 @@ def render_tournament_selector():
         next((n for n, tid in tournament_names.items() if tid == current_id), name_list[0])
     ) if current_id else 0
 
+    st.sidebar.divider()
     selected_name = st.sidebar.selectbox(
         "Tournament",
         name_list,
