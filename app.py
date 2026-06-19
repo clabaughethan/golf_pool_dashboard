@@ -22,8 +22,16 @@ st.session_state.selected_tournament_id = selected_id
 st.session_state.selected_tournament_config = configs[selected_id]
 
 st.sidebar.divider()
+st.sidebar.markdown("**Pages**")
 
-page = st.sidebar.radio("Go to", ["Home", "Rules", "Make Picks", "Scoreboard"], label_visibility="collapsed")
+nav_items = [("🏠 Home", "Home"), ("📋 Rules", "Rules"), ("🏌️ Make Picks", "Make Picks"), ("🏆 Scoreboard", "Scoreboard")]
+for label, key in nav_items:
+    active = (st.session_state.get("page", "Home") == key)
+    if st.sidebar.button(label, key=f"nav_{key}", use_container_width=True, disabled=active):
+        st.session_state.page = key
+        st.rerun()
+
+page = st.session_state.get("page", "Home")
 
 config = configs[selected_id]
 
