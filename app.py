@@ -9,6 +9,15 @@ from utils.config import load_tournament_configs
 
 st.set_page_config(page_title="Wasylak Golf Pools App", page_icon="⛳", layout="wide", initial_sidebar_state="expanded")
 
+st.markdown("""
+<style>
+section[data-testid="stSidebar"] div[data-testid="stSelectbox"] label {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 configs = load_tournament_configs()
 tournament_names = {c["name"]: cid for cid, c in configs.items()}
 name_list = list(tournament_names.keys())
@@ -21,7 +30,7 @@ if st.sidebar.button("🏠 Home", key="nav_Home", use_container_width=True, disa
     st.session_state.page = "Home"
     st.rerun()
 
-selected_name = st.sidebar.selectbox("Tournament", name_list, index=current_index, label_visibility="collapsed")
+selected_name = st.sidebar.selectbox("Tournament", name_list, index=current_index)
 selected_id = tournament_names[selected_name]
 st.session_state.selected_tournament_id = selected_id
 st.session_state.selected_tournament_config = configs[selected_id]
