@@ -1,0 +1,94 @@
+{
+  "id": "masters-2026",
+  "name": "2026 Masters",
+  "rules": {
+    "win_picks_per_group": {
+      "1": 2,
+      "2": 2,
+      "3": 2,
+      "4": 1,
+      "5": 1
+    },
+    "short_picks": 2,
+    "missed_cut_points": 75,
+    "wd_dq_points": 75,
+    "short_not_bottom_75_points": 75
+  },
+  "player_groups": {
+    "1": [
+      {"name": "Scottie Scheffler", "owgr": 1, "odds": "+400"},
+      {"name": "Rory McIlroy", "owgr": 2, "odds": "+650"},
+      {"name": "Jon Rahm", "owgr": 8, "odds": "+800"},
+      {"name": "Xander Schauffele", "owgr": 3, "odds": "+900"},
+      {"name": "Ludvig Aberg", "owgr": 5, "odds": "+1100"},
+      {"name": "Bryson DeChambeau", "owgr": 10, "odds": "+1400"},
+      {"name": "Collin Morikawa", "owgr": 4, "odds": "+1600"},
+      {"name": "Justin Thomas", "owgr": 7, "odds": "+1800"},
+      {"name": "Wyndham Clark", "owgr": 9, "odds": "+2000"},
+      {"name": "Matt Fitzpatrick", "owgr": 11, "odds": "+2200"}
+    ],
+    "2": [
+      {"name": "Viktor Hovland", "owgr": 14, "odds": "+2500"},
+      {"name": "Tommy Fleetwood", "owgr": 12, "odds": "+2500"},
+      {"name": "Sam Burns", "owgr": 15, "odds": "+2800"},
+      {"name": "Patrick Cantlay", "owgr": 16, "odds": "+3000"},
+      {"name": "Cameron Young", "owgr": 13, "odds": "+3000"},
+      {"name": "Harris English", "owgr": 18, "odds": "+3500"},
+      {"name": "Hideki Matsuyama", "owgr": 17, "odds": "+3500"},
+      {"name": "Corey Conners", "owgr": 22, "odds": "+4000"},
+      {"name": "Jordan Spieth", "owgr": 25, "odds": "+4000"},
+      {"name": "J.J. Spaun", "owgr": 9, "odds": "+4000"},
+      {"name": "Keegan Bradley", "owgr": 20, "odds": "+4500"},
+      {"name": "Aaron Rai", "owgr": 19, "odds": "+5000"},
+      {"name": "Jason Day", "owgr": 28, "odds": "+5000"},
+      {"name": "Sepp Straka", "owgr": 21, "odds": "+5000"}
+    ],
+    "3": [
+      {"name": "Robert MacIntyre", "owgr": 23, "odds": "+5500"},
+      {"name": "Russell Henley", "owgr": 26, "odds": "+6000"},
+      {"name": "Chris Gotterup", "owgr": 24, "odds": "+6000"},
+      {"name": "Alex Noren", "owgr": 30, "odds": "+6500"},
+      {"name": "Ryan Fox", "owgr": 32, "odds": "+7000"},
+      {"name": "Nico Echavarria", "owgr": 29, "odds": "+7000"},
+      {"name": "Tyrrell Hatton", "owgr": 27, "odds": "+7000"},
+      {"name": "Akshay Bhatia", "owgr": 33, "odds": "+7500"},
+      {"name": "Jacob Bridgeman", "owgr": 35, "odds": "+8000"},
+      {"name": "Max Greyserman", "owgr": 38, "odds": "+8000"},
+      {"name": "Maverick McNealy", "owgr": 34, "odds": "+8000"},
+      {"name": "Ryan Gerard", "owgr": 36, "odds": "+8500"},
+      {"name": "Daniel Berger", "owgr": 40, "odds": "+9000"},
+      {"name": "Sam Stevens", "owgr": 42, "odds": "+10000"},
+      {"name": "Michael Kim", "owgr": 37, "odds": "+10000"},
+      {"name": "Michael Brennan", "owgr": 45, "odds": "+10000"},
+      {"name": "Cameron Smith", "owgr": 50, "odds": "+10000"},
+      {"name": "Dustin Johnson", "owgr": 60, "odds": "+10000"},
+      {"name": "Gary Woodland", "owgr": 44, "odds": "+12000"}
+    ],
+    "4": [
+      {"name": "Brian Campbell", "owgr": 55, "odds": "+15000"},
+      {"name": "Nicolai Hojgaard", "owgr": 48, "odds": "+15000"},
+      {"name": "Sami Valimaki", "owgr": 52, "odds": "+15000"},
+      {"name": "Patrick Reed", "owgr": 65, "odds": "+15000"},
+      {"name": "Sergio Garcia", "owgr": 70, "odds": "+20000"},
+      {"name": "Davis Riley", "owgr": 58, "odds": "+20000"},
+      {"name": "Nick Taylor", "owgr": 62, "odds": "+20000"},
+      {"name": "Matt McCarty", "owgr": 53, "odds": "+20000"},
+      {"name": "Fred Couples", "owgr": null, "odds": "+25000"},
+      {"name": "Bubba Watson", "owgr": null, "odds": "+25000"},
+      {"name": "Charl Schwartzel", "owgr": null, "odds": "+25000"},
+      {"name": "Danny Willett", "owgr": null, "odds": "+25000"},
+      {"name": "Adam Scott", "owgr": null, "odds": "+25000"},
+      {"name": "Vijay Singh", "owgr": null, "odds": "+50000"},
+      {"name": "Mike Weir", "owgr": null, "odds": "+50000"},
+      {"name": "Angel Cabrera", "owgr": null, "odds": "+50000"}
+    ],
+    "5": [
+      {"name": "Ethan Fang", "owgr": null, "odds": "+50000"},
+      {"name": "Mason Howell", "owgr": null, "odds": "+50000"},
+      {"name": "Jackson Herrington", "owgr": null, "odds": "+50000"},
+      {"name": "Brandon Holtz", "owgr": null, "odds": "+50000"},
+      {"name": "Fifa Laopakdee", "owgr": null, "odds": "+50000"},
+      {"name": "Mateo Pulcini", "owgr": null, "odds": "+50000"}
+    ]
+  }
+}
