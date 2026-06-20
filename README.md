@@ -72,11 +72,14 @@ Tournament configs are JSON files in `data/tournaments/`. Each contains:
 
 ## Scoring
 
+Scoring rules vary by tournament and are defined in each tournament's JSON config. Common patterns:
+
 - **Win picks** score their finishing position (1st = 1 pt, 27th = 27 pts)
 - **Short picks** score distance from last (last = 1 pt, 30th-to-last = 30 pts)
 - **Missed cut, WD, or DQ** = 75 points
-- **Short pick not in bottom 75 after Day 2** = 75 points
-- Lowest total score wins
+- **Short pick not in bottom 75 after Day 2** = 75 points (if applicable)
+
+See each tournament's config in `data/tournaments/` for exact rules. Lowest total score wins.
 
 ## Adding a New Tournament
 
