@@ -22,15 +22,15 @@ name_list = list(tournament_names.keys())
 current_id = st.session_state.get("selected_tournament_id")
 current_index = name_list.index(next((n for n, tid in tournament_names.items() if tid == current_id), name_list[0])) if current_id else 0
 
-active_home = (st.session_state.get("page", "Home") == "Home")
-if st.sidebar.button("🏠 Home", key="nav_Home", use_container_width=True, disabled=active_home):
-    st.session_state.page = "Home"
-    st.rerun()
-
 selected_name = st.sidebar.selectbox("Tournament", name_list, index=current_index)
 selected_id = tournament_names[selected_name]
 st.session_state.selected_tournament_id = selected_id
 st.session_state.selected_tournament_config = configs[selected_id]
+
+active_home = (st.session_state.get("page", "Home") == "Home")
+if st.sidebar.button("🏠 Home", key="nav_Home", use_container_width=True, disabled=active_home):
+    st.session_state.page = "Home"
+    st.rerun()
 
 st.sidebar.divider()
 
@@ -56,17 +56,14 @@ if page == "Home":
     all_tournaments = get_sb().table("tournaments").select("*").execute().data
     tournament = next((t for t in all_tournaments if t["id"] == selected_id), None)
     status = tournament.get("status", "open") if tournament else "open"
-    pool_code = tournament.get("pool_code", "") if tournament else ""
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
     with col1:
         st.metric("Status", status.capitalize())
     with col2:
         st.metric("Participants", participant_count)
     with col3:
         st.metric("Entry Fee", "$20")
-    with col4:
-        st.metric("Pool Code", pool_code, help="Share this with participants")
 
     st.markdown("---")
     st.subheader("How It Works")
