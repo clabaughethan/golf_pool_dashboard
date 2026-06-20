@@ -185,22 +185,51 @@ elif page == "Make Picks":
 
     rules = config["rules"]
     groups = config["player_groups"]
-    all_players = sorted(set(p["name"] for g in groups.values() for p in g))
+
+    def parse_odds(s):
+        return int(s.replace("+", "").replace(",", "")) if s else 999999
+
+    def player_label(p):
+        owgr = f"OWGR: {p['owgr']}" if p.get("owgr") else "No OWGR"
+        return f"{p['name']}  ({owgr}, {p['odds']})"
+
+    def sort_key(p):
+        return parse_odds(p["odds"])
+
+    all_players_list = sorted(
+        [p for g in groups.values() for p in g],
+        key=sort_key
+    )
+    all_player_names = [p["name"] for p in all_players_list]
+    all_player_labels = {p["name"]: player_label(p) for p in all_players_list}
 
     win_picks = []
     st.subheader("Win Picks")
     for group_num, count in rules["win_picks_per_group"].items():
-        group_names = [p["name"] for p in groups[group_num]]
+        group_players = sorted(groups[group_num], key=sort_key)
+        group_names = [p["name"] for p in group_players]
         defaults = [p for p in existing_win if p in group_names]
-        selected = st.multiselect(f"Group {group_num} — Pick {count} to WIN", group_names, default=defaults, key=f"win_{group_num}")
+        selected = st.multiselect(
+            f"Group {group_num} — Pick {count} to WIN",
+            group_names,
+            default=defaults,
+            key=f"win_{group_num}",
+            format_func=lambda n: all_player_labels.get(n, n),
+        )
         if len(selected) > count:
             st.error(f"Too many picks for Group {group_num}. You can only pick {count}.")
         elif len(selected) < count:
             st.warning(f"Select {count - len(selected)} more from Group {group_num}.")
         win_picks.extend(selected)
 
-    short_defaults = [p for p in existing_short if p in all_players]
-    short_picks = st.multiselect(f"Short Picks — Pick {rules['short_picks']} to LOSE", all_players, default=short_defaults, key="short")
+    short_defaults = [p for p in existing_short if p in all_player_names]
+    short_picks = st.multiselect(
+        f"Short Picks — Pick {rules['short_picks']} to LOSE",
+        all_player_names,
+        default=short_defaults,
+        key="short",
+        format_func=lambda n: all_player_labels.get(n, n),
+    )
     if len(short_picks) > rules["short_picks"]:
         st.error(f"Too many short picks. You can only pick {rules['short_picks']}.")
     elif len(short_picks) < rules["short_picks"]:
