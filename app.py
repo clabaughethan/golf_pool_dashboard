@@ -18,7 +18,10 @@ def get_sb():
     return st.session_state.supabase
 
 configs = load_tournament_configs()
-tournament_names = {c["name"]: cid for cid, c in configs.items()}
+db_tournaments = get_sb().table("tournaments").select("id, start_time").execute().data
+start_times = {t["id"]: t.get("start_time") or "" for t in db_tournaments}
+sorted_ids = sorted(configs.keys(), key=lambda cid: start_times.get(cid, ""), reverse=True)
+tournament_names = {configs[cid]["name"]: cid for cid in sorted_ids}
 name_list = list(tournament_names.keys())
 
 current_id = st.session_state.get("selected_tournament_id")
