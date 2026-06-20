@@ -9,16 +9,6 @@ from utils.config import load_tournament_configs
 
 st.set_page_config(page_title="Wasylak Golf Pools App", page_icon="⛳", layout="wide", initial_sidebar_state="expanded")
 
-st.markdown("""
-<style>
-    .stApp hr { border-color: #2ea04344 !important; }
-    .stApp div.stAlert { border-radius: 10px; }
-</style>
-<div style="background: linear-gradient(90deg, #2ea043, #1a7a33); padding: 12px 24px; border-radius: 12px; margin-bottom: 16px;">
-    <span style="color: white; font-weight: 700; font-size: 1.1rem;">⛳ Wasylak Golf Pools</span>
-</div>
-""", unsafe_allow_html=True)
-
 configs = load_tournament_configs()
 tournament_names = {c["name"]: cid for cid, c in configs.items()}
 name_list = list(tournament_names.keys())
@@ -50,8 +40,9 @@ page = st.session_state.get("page", "Home")
 config = configs[selected_id]
 
 if page == "Home":
-    st.markdown(f"### {config['name']}")
+    st.title("⛳ Wasylak Golf Pools App")
     st.markdown("---")
+    st.markdown(f"### {config['name']}")
     st.info("Pool code is required to submit picks. Get it from your pool host!")
 
 elif page == "Rules":
