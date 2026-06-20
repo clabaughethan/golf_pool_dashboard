@@ -23,13 +23,16 @@ def fetch_leaderboard():
         for rs in linescores:
             rnd_num = rs.get("period")
             gross = rs.get("value")
+            display = rs.get("displayValue", "")
             holes = len(rs.get("linescores", []))
-            complete = holes >= 18
+            dnp = display == "-" or holes == 0
+            complete = holes >= 18 if not dnp else False
             rounds.append({
                 "number": rnd_num,
                 "strokes": int(gross) if gross and gross != "-" and complete else None,
-                "holes_completed": holes if not complete and holes > 0 else None,
+                "holes_completed": holes if not complete and holes > 0 and not dnp else None,
                 "complete": complete,
+                "dnp": dnp,
             })
 
         players[name] = {

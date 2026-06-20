@@ -335,6 +335,8 @@ elif page == "Leaderboard":
         with cols[3]:
             if cur is None:
                 st.text("")
+            elif cur["dnp"]:
+                st.text("—")
             elif cur["complete"]:
                 st.text(str(cur["strokes"]))
             else:
@@ -344,6 +346,8 @@ elif page == "Leaderboard":
             with cols[4 + i]:
                 if r is None:
                     st.text("NA")
+                elif r["dnp"]:
+                    st.text("—")
                 elif r["complete"]:
                     st.text(str(r["strokes"]))
                 else:
