@@ -2,6 +2,7 @@ import json
 from datetime import datetime, timezone
 import streamlit as st
 import requests
+import pandas as pd
 from pathlib import Path
 from streamlit_autorefresh import st_autorefresh
 from supabase import create_client
@@ -446,40 +447,30 @@ elif page == "Leaderboard":
 
     rounds_to_show = [rn for rn in range(1, max_round + 1) if rn != cur_round]
 
-    col_w = [1, 2.5, 1, 1.2] + [1.2] * len(rounds_to_show)
-    cols = st.columns(col_w)
-    with cols[0]: st.text("Pos")
-    with cols[1]: st.text("Player")
-    with cols[2]: st.text("To Par")
-    with cols[3]: st.text(f"R{cur_round}")
-    for i, rn in enumerate(rounds_to_show):
-        with cols[4 + i]: st.text(f"R{rn}")
-    st.divider()
-
+    rows = []
     for idx, (name, d) in enumerate(sorted_items):
-        cols = st.columns(col_w)
-        with cols[0]: st.text(positions[idx])
-        with cols[1]: st.text(name)
-        with cols[2]: st.text(d["score"])
+        row = {"Pos": positions[idx], "Player": name, "To Par": d["score"]}
         round_map = {r["number"]: r for r in d.get("rounds", [])}
         cur = round_map.get(cur_round)
-        with cols[3]:
-            if cur is None:
-                st.text("")
-            elif cur["dnp"]:
-                st.text("—")
-            elif cur["complete"]:
-                st.text(str(cur["strokes"]))
-            else:
-                st.text(f"thru {cur['holes_completed']}")
-        for i, rn in enumerate(rounds_to_show):
+        if cur is None:
+            row[f"R{cur_round}"] = ""
+        elif cur["dnp"]:
+            row[f"R{cur_round}"] = "—"
+        elif cur["complete"]:
+            row[f"R{cur_round}"] = str(cur["strokes"])
+        else:
+            row[f"R{cur_round}"] = f"thru {cur['holes_completed']}"
+        for rn in rounds_to_show:
             r = round_map.get(rn)
-            with cols[4 + i]:
-                if r is None:
-                    st.text("NA")
-                elif r["dnp"]:
-                    st.text("—")
-                elif r["complete"]:
-                    st.text(str(r["strokes"]))
-                else:
-                    st.text(f"thru {r['holes_completed']}")
+            if r is None:
+                row[f"R{rn}"] = "NA"
+            elif r["dnp"]:
+                row[f"R{rn}"] = "—"
+            elif r["complete"]:
+                row[f"R{rn}"] = str(r["strokes"])
+            else:
+                row[f"R{rn}"] = f"thru {r['holes_completed']}"
+        rows.append(row)
+
+    df = pd.DataFrame(rows)
+    st.dataframe(df, use_container_width=True, hide_index=True)
