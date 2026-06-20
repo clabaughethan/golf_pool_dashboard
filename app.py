@@ -298,6 +298,7 @@ elif page == "Leaderboard":
     st.subheader("ESPN Leaderboard")
 
     sorted_items = sorted(leaderboard["players"].items(), key=lambda x: x[1]["order"])
+    cur_round = leaderboard["round"]
     max_round = max(
         (r["number"] for _, d in sorted_items for r in d.get("rounds", []) if not r["dnp"]),
         default=cur_round,
@@ -315,7 +316,6 @@ elif page == "Leaderboard":
             positions[k] = f"T{i + 1}" if tied else str(i + 1)
         i = j
 
-    cur_round = leaderboard["round"]
     rounds_to_show = [rn for rn in range(1, max_round + 1) if rn != cur_round]
 
     col_w = [1, 2.5, 1, 1.2] + [1.2] * len(rounds_to_show)
