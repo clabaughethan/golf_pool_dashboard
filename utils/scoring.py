@@ -18,6 +18,8 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
     is_final = leaderboard["completed"]
     cut_line = (rules or {}).get("cut_line", 60)
 
+    made_cut = _compute_made_cut(players, cut_line)
+
     results = []
     for entry in picks_list:
         score = 0
@@ -37,7 +39,7 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
             elif not is_final and _rounds_completed(player_data) < 2:
                 detail["points"] = 0
                 detail["result"] = "In progress"
-            elif not is_final and _missed_cut(player_data, total_players, cut_line):
+            elif not is_final and _missed_cut(player_name, total_players, made_cut):
                 detail["points"] = MISSED_CUT_POINTS
                 detail["result"] = "Missed Cut"
             elif is_final and player_data["score"] in ("WD", "DQ", "MC"):
@@ -90,14 +92,37 @@ def _rounds_completed(player_data):
     return sum(1 for r in player_data.get("rounds", []) if r["complete"])
 
 
-def _missed_cut(player_data, total_players, cut_line=60):
-    """Check if a player missed the cut based on tournament cut line."""
-    if _rounds_completed(player_data) < 2:
-        return False
-    if player_data["score"] in ("WD", "DQ", "MC"):
-        return True
-    pos = player_data["order"]
-    return pos > cut_line
+def _compute_made_cut(players, cut_line):
+    """Compute which players made the cut based on round 2 scores only."""
+    r2_scores = {}
+    for name, p in players.items():
+        rounds = p.get("rounds", [])
+        r2 = [r for r in rounds if r["number"] == 2]
+        if r2 and r2[0]["complete"] and r2[0].get("strokes") is not None:
+            r1 = [r for r in rounds if r["number"] == 1]
+            total = 0
+            for r in r1 + r2:
+                if r.get("strokes") is not None:
+                    total += r["strokes"]
+            r2_scores[name] = total
+
+    sorted_players = sorted(r2_scores.items(), key=lambda x: x[1])
+    made_cut = set()
+    i = 0
+    while i < len(sorted_players) and i < cut_line:
+        score = sorted_players[i][1]
+        j = i
+        while j < len(sorted_players) and sorted_players[j][1] == score:
+            j += 1
+        for k in range(i, j):
+            made_cut.add(sorted_players[k][0])
+        i = j
+    return made_cut
+
+
+def _missed_cut(player_name, total_players, made_cut):
+    """Check if a player missed the cut."""
+    return player_name not in made_cut
 
 
 def _not_in_bottom_75_after_day2(player_data, total_players):
