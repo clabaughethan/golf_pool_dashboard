@@ -12,7 +12,8 @@
     "short_picks": 2,
     "missed_cut_points": 75,
     "wd_dq_points": 75,
-    "short_not_bottom_75_points": 75
+    "short_not_bottom_75_points": 75,
+    "cut_line": 50
   },
   "player_groups": {
     "1": [

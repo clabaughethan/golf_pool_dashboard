@@ -3,18 +3,20 @@ WD_DQ_POINTS = 75
 SHORT_NOT_BOTTOM_75_POINTS = 75
 
 
-def calculate_pool_scores(picks_list, leaderboard):
+def calculate_pool_scores(picks_list, leaderboard, rules=None):
     """
     Calculate pool scores for all participants.
 
     picks_list: list of dicts with keys: participant_name, win_picks, short_picks
     leaderboard: dict from espn_api.fetch_leaderboard()
+    rules: tournament rules dict (for cut_line)
 
     Returns list of dicts sorted by score (least points wins).
     """
     total_players = leaderboard["total_players"]
     players = leaderboard["players"]
     is_final = leaderboard["completed"]
+    cut_line = (rules or {}).get("cut_line", 60)
 
     results = []
     for entry in picks_list:
@@ -35,7 +37,7 @@ def calculate_pool_scores(picks_list, leaderboard):
             elif not is_final and _rounds_completed(player_data) < 2:
                 detail["points"] = 0
                 detail["result"] = "In progress"
-            elif not is_final and _missed_cut(player_data, total_players):
+            elif not is_final and _missed_cut(player_data, total_players, cut_line):
                 detail["points"] = MISSED_CUT_POINTS
                 detail["result"] = "Missed Cut"
             elif is_final and player_data["score"] in ("WD", "DQ", "MC"):
@@ -88,14 +90,14 @@ def _rounds_completed(player_data):
     return sum(1 for r in player_data.get("rounds", []) if r["complete"])
 
 
-def _missed_cut(player_data, total_players):
-    """Check if a player likely missed the cut (after round 2, not in top ~70 + ties)."""
+def _missed_cut(player_data, total_players, cut_line=60):
+    """Check if a player missed the cut based on tournament cut line."""
     if _rounds_completed(player_data) < 2:
         return False
     if player_data["score"] in ("WD", "DQ", "MC"):
         return True
     pos = player_data["order"]
-    return pos > 78
+    return pos > cut_line
 
 
 def _not_in_bottom_75_after_day2(player_data, total_players):

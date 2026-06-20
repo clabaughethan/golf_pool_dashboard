@@ -421,7 +421,7 @@ elif page == "Leaderboard":
         st.info("No picks submitted yet.")
         st.stop()
 
-    results = calculate_pool_scores(picks_list, leaderboard)
+    results = calculate_pool_scores(picks_list, leaderboard, config["rules"])
     st.subheader("Pool Standings")
 
     for r in results:
