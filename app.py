@@ -9,6 +9,12 @@ from utils.config import load_tournament_configs
 
 st.set_page_config(page_title="Wasylak Golf Pools App", page_icon="⛳", layout="wide", initial_sidebar_state="expanded")
 
+
+def get_sb():
+    if "supabase" not in st.session_state:
+        st.session_state.supabase = create_client(st.secrets["supabase"]["url"], st.secrets["supabase"]["key"])
+    return st.session_state.supabase
+
 configs = load_tournament_configs()
 tournament_names = {c["name"]: cid for cid, c in configs.items()}
 name_list = list(tournament_names.keys())
@@ -43,7 +49,48 @@ if page == "Home":
     st.title("⛳ Wasylak Golf Pools App")
     st.markdown("---")
     st.markdown(f"### {config['name']}")
-    st.info("Pool code is required to submit picks. Get it from your pool host!")
+
+    picks = get_sb().table("picks").select("*", count="exact").eq("tournament_id", selected_id).execute()
+    participant_count = picks.count if hasattr(picks, 'count') else len(picks.data)
+
+    status = tournament.get("status", "open") if (tournament := next((t for t in get_sb().table("tournaments").select("*").execute().data if t["id"] == selected_id), None)) else "open"
+
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Status", status.capitalize())
+    with col2:
+        st.metric("Participants", participant_count)
+    with col3:
+        st.metric("Entry Fee", "$20")
+    with col4:
+        st.metric("Pool Code", next((t["pool_code"] for t in get_sb().table("tournaments").select("pool_code").eq("id", selected_id).execute().data if t["id"] == selected_id), ""), help="Share this with participants")
+
+    st.markdown("---")
+    st.subheader("How It Works")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown("**1. Make Your Picks**")
+        st.markdown("Select 8 win picks and 2 short picks. Enter the pool code to submit.")
+    with col2:
+        st.markdown("**2. Tournament Starts**")
+        st.markdown("Picks lock at the first tee time. No changes after that.")
+    with col3:
+        st.markdown("**3. Live Scoring**")
+        st.markdown("Standings update automatically from ESPN every 2 minutes.")
+
+    st.markdown("---")
+    st.subheader("Quick Links")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("📋 View Rules", use_container_width=True):
+            st.session_state.page = "Rules"
+            st.rerun()
+    with col2:
+        if st.button("🏌️ Make Picks", use_container_width=True, type="primary"):
+            st.session_state.page = "Make Picks"
+            st.rerun()
+
+    st.info("Share the pool code with participants so they can submit their picks!")
 
 elif page == "Rules":
     st.title("📋 Pool Rules")
@@ -88,11 +135,6 @@ elif page == "Rules":
 
 elif page == "Make Picks":
     tournament_id = selected_id
-
-    def get_sb():
-        if "supabase" not in st.session_state:
-            st.session_state.supabase = create_client(st.secrets["supabase"]["url"], st.secrets["supabase"]["key"])
-        return st.session_state.supabase
 
     tournaments = get_sb().table("tournaments").select("*").execute().data
     tournament = next((t for t in tournaments if t["id"] == tournament_id), None)
@@ -186,11 +228,6 @@ elif page == "Make Picks":
 
 elif page == "Leaderboard":
     tournament_id = selected_id
-
-    def get_sb():
-        if "supabase" not in st.session_state:
-            st.session_state.supabase = create_client(st.secrets["supabase"]["url"], st.secrets["supabase"]["key"])
-        return st.session_state.supabase
 
     st.title("🏆 Live Leaderboard")
     st.divider()
