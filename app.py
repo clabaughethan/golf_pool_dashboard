@@ -320,7 +320,7 @@ elif page == "Leaderboard":
     with cols[0]: st.text("Pos")
     with cols[1]: st.text("Player")
     with cols[2]: st.text("To Par")
-    with cols[3]: st.text(f"Rd {cur_round}")
+    with cols[3]: st.text(f"R{cur_round}")
     for i, rn in enumerate(rounds_to_show):
         with cols[4 + i]: st.text(f"R{rn}")
     st.divider()
