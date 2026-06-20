@@ -27,12 +27,12 @@ selected_id = tournament_names[selected_name]
 st.session_state.selected_tournament_id = selected_id
 st.session_state.selected_tournament_config = configs[selected_id]
 
+st.sidebar.divider()
+
 active_home = (st.session_state.get("page", "Home") == "Home")
 if st.sidebar.button("🏠 Home", key="nav_Home", use_container_width=True, disabled=active_home):
     st.session_state.page = "Home"
     st.rerun()
-
-st.sidebar.divider()
 
 nav_items = [("📋 Rules", "Rules"), ("🏌️ Make Picks", "Make Picks"), ("🏆 Leaderboard", "Leaderboard")]
 for label, key in nav_items:
