@@ -53,7 +53,10 @@ if page == "Home":
     picks = get_sb().table("picks").select("*", count="exact").eq("tournament_id", selected_id).execute()
     participant_count = picks.count if hasattr(picks, 'count') else len(picks.data)
 
-    status = tournament.get("status", "open") if (tournament := next((t for t in get_sb().table("tournaments").select("*").execute().data if t["id"] == selected_id), None)) else "open"
+    all_tournaments = get_sb().table("tournaments").select("*").execute().data
+    tournament = next((t for t in all_tournaments if t["id"] == selected_id), None)
+    status = tournament.get("status", "open") if tournament else "open"
+    pool_code = tournament.get("pool_code", "") if tournament else ""
 
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -63,7 +66,7 @@ if page == "Home":
     with col3:
         st.metric("Entry Fee", "$20")
     with col4:
-        st.metric("Pool Code", next((t["pool_code"] for t in get_sb().table("tournaments").select("pool_code").eq("id", selected_id).execute().data if t["id"] == selected_id), ""), help="Share this with participants")
+        st.metric("Pool Code", pool_code, help="Share this with participants")
 
     st.markdown("---")
     st.subheader("How It Works")
