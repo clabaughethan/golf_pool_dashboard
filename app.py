@@ -300,22 +300,85 @@ elif page == "Leaderboard":
         }
         st.subheader(f"{leaderboard['event_name']} — {leaderboard['status']}")
     else:
-        st_autorefresh(interval=120_000, key="refresh")
         try:
             leaderboard = fetch_leaderboard()
-        except Exception as e:
-            st.error(f"Could not fetch live scores: {e}")
-            st.stop()
+            live = True
+        except Exception:
+            live = False
 
-        if leaderboard["completed"]:
-            sb.table("leaderboard_snapshots").upsert({
-                "tournament_id": tournament_id,
-                "event_name": leaderboard["event_name"],
-                "status": leaderboard["status"],
-                "players": leaderboard["players"],
-            }, on_conflict="tournament_id").execute()
+        if live:
+            st_autorefresh(interval=120_000, key="refresh")
+            if leaderboard["completed"]:
+                sb.table("leaderboard_snapshots").upsert({
+                    "tournament_id": tournament_id,
+                    "event_name": leaderboard["event_name"],
+                    "status": leaderboard["status"],
+                    "players": leaderboard["players"],
+                }, on_conflict="tournament_id").execute()
+            st.subheader(f"{leaderboard['event_name']} — {leaderboard['status']}")
+        else:
+            st.subheader(f"{config['name']} — Final Results")
+            st.info("No live data available. Paste the final leaderboard below to save results.")
 
-        st.subheader(f"{leaderboard['event_name']} — {leaderboard['status']}")
+            with st.expander("Manually enter leaderboard", expanded=True):
+                st.caption("Paste tab-separated data: one line per player, format: `Player Name\\tScore to Par` (e.g. `-7` or `E`)")
+                raw = st.text_area("Leaderboard data", height=300, key="manual_lb")
+                if st.button("Save Snapshot", type="primary"):
+                    if not raw.strip():
+                        st.error("Please paste leaderboard data.")
+                    else:
+                        players = {}
+                        for line in raw.strip().split("\n"):
+                            parts = line.split("\t")
+                            if len(parts) < 2:
+                                continue
+                            name = parts[0].strip()
+                            score_str = parts[1].strip()
+                            if score_str == "E":
+                                score_val = 0
+                            else:
+                                score_val = int(score_str.replace("+", ""))
+                            players[name] = {"score": score_val, "score_str": score_str}
+
+                        sorted_players = sorted(players.items(), key=lambda x: x[1]["score"])
+                        pos = 1
+                        i = 0
+                        while i < len(sorted_players):
+                            j = i
+                            while j < len(sorted_players) and sorted_players[j][1]["score"] == sorted_players[i][1]["score"]:
+                                j += 1
+                            for k in range(i, j):
+                                name, data = sorted_players[k]
+                                order = i + 1
+                                tied = j - i > 1
+                                sorted_players[k] = (name, {
+                                    "order": order,
+                                    "score": data["score_str"],
+                                    "rounds": [],
+                                })
+                            i = j
+
+                        final_players = {name: data for name, data in sorted_players}
+
+                        sb.table("leaderboard_snapshots").upsert({
+                            "tournament_id": tournament_id,
+                            "event_name": config["name"],
+                            "status": "Final",
+                            "players": final_players,
+                        }, on_conflict="tournament_id").execute()
+
+                        leaderboard = {
+                            "event_name": config["name"],
+                            "status": "Final",
+                            "total_players": len(final_players),
+                            "completed": True,
+                            "players": final_players,
+                        }
+                        st.success("Leaderboard saved!")
+                        st.rerun()
+
+            if not snapshot:
+                st.stop()
 
     sb = get_sb()
     picks_list = sb.table("picks").select("*").eq("tournament_id", tournament_id).execute().data
