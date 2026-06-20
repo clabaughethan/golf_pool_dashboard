@@ -50,16 +50,8 @@ page = st.session_state.get("page", "Home")
 config = configs[selected_id]
 
 if page == "Home":
-    st.title("⛳ Wasylak Golf Pools App")
-    st.markdown("---")
     st.markdown(f"### {config['name']}")
-    st.markdown("""
-Navigate using the sidebar:
-
-- **Rules** — How the pool works
-- **Make Picks** — Submit your win and short picks
-- **Leaderboard** — Live leaderboard and pool standings
-""")
+    st.markdown("---")
     st.info("Pool code is required to submit picks. Get it from your pool host!")
 
 elif page == "Rules":
