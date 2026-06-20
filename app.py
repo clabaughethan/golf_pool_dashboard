@@ -299,7 +299,7 @@ elif page == "Leaderboard":
     st.subheader("Pool Standings")
 
     for r in results:
-        with st.expander(f"**#{r['rank']} {r['participant_name']}** — {r['score']} pts", expanded=(r["rank"] <= 3)):
+        with st.expander(f"**#{r['rank']} {r['participant_name']}** — {r['score']} pts", expanded=False):
             cols = st.columns(2)
             with cols[0]:
                 st.markdown("**Win Picks**")
