@@ -35,9 +35,14 @@ def fetch_leaderboard():
                 "dnp": dnp,
             })
 
+        score = c["score"]
+        has_dnp = any(r["dnp"] for r in rounds)
+        if has_dnp:
+            score = "WD"
+
         players[name] = {
             "order": c["order"],
-            "score": c["score"],
+            "score": score,
             "rounds": rounds,
         }
 
