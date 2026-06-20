@@ -6,7 +6,7 @@ import pandas as pd
 from pathlib import Path
 from streamlit_autorefresh import st_autorefresh
 from supabase import create_client
-from utils.scoring import calculate_pool_scores
+from utils.scoring import calculate_pool_scores, _compute_made_cut
 from utils.espn_api import fetch_leaderboard
 from utils.config import load_tournament_configs
 
@@ -323,6 +323,7 @@ elif page == "Leaderboard":
     sb = get_sb()
 
     snapshot = sb.table("leaderboard_snapshots").select("*").eq("tournament_id", tournament_id).execute().data
+    is_snapshot = bool(snapshot)
     if snapshot:
         snap = snapshot[0]
         leaderboard = {
@@ -443,6 +444,8 @@ elif page == "Leaderboard":
 
     sorted_items = sorted(leaderboard["players"].items(), key=lambda x: x[1]["order"])
     cur_round = leaderboard["round"]
+    cut_line = config["rules"].get("cut_line", 60)
+    made_cut = _compute_made_cut(leaderboard["players"], cut_line)
     max_round = max(
         (r["number"] for _, d in sorted_items for r in d.get("rounds", []) if not r["dnp"]),
         default=cur_round,
@@ -464,7 +467,10 @@ elif page == "Leaderboard":
 
     rows = []
     for idx, (name, d) in enumerate(sorted_items):
-        row = {"Pos": positions[idx], "Player": name, "To Par": d["score"]}
+        pos = positions[idx]
+        if name not in made_cut:
+            pos = f"{pos} MC"
+        row = {"Pos": pos, "Player": name, "To Par": d["score"]}
         round_map = {r["number"]: r for r in d.get("rounds", [])}
         cur = round_map.get(cur_round)
         if cur is None:
