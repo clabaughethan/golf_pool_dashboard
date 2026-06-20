@@ -12,26 +12,36 @@ def fetch_leaderboard():
     event = data["events"][0]
     competition = event["competitions"][0]
     competitors = competition["competitors"]
+    current_round = competition["status"].get("period", 1)
 
     players = {}
     for c in competitors:
         name = c["athlete"]["displayName"]
         linescores = c.get("linescores", [])
-        rounds_completed = sum(
-            1 for r in linescores
-            if r.get("displayValue") and r["displayValue"] != "-"
-        )
+
+        rounds = []
+        for rs in linescores:
+            rnd_num = rs.get("period")
+            gross = rs.get("value")
+            holes = len(rs.get("linescores", []))
+            complete = holes >= 18
+            rounds.append({
+                "number": rnd_num,
+                "strokes": int(gross) if gross and gross != "-" and complete else None,
+                "holes_completed": holes if not complete and holes > 0 else None,
+                "complete": complete,
+            })
 
         players[name] = {
             "order": c["order"],
             "score": c["score"],
-            "rounds_completed": rounds_completed,
+            "rounds": rounds,
         }
 
     return {
         "event_name": event["name"],
         "status": competition["status"]["type"]["detail"],
-        "round": competition["status"].get("period", 0),
+        "round": current_round,
         "total_players": len(competitors),
         "completed": event["status"]["type"].get("completed", False),
         "players": players,

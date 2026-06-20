@@ -5,6 +5,7 @@ from pathlib import Path
 from streamlit_autorefresh import st_autorefresh
 from supabase import create_client
 from utils.scoring import calculate_pool_scores
+from utils.espn_api import fetch_leaderboard
 from utils.config import load_tournament_configs
 
 st.set_page_config(page_title="Wasylak Golf Pools App", page_icon="⛳", layout="wide", initial_sidebar_state="expanded")
@@ -263,26 +264,7 @@ elif page == "Leaderboard":
     st_autorefresh(interval=120_000, key="refresh")
 
     try:
-        resp = requests.get("https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard", timeout=10)
-        resp.raise_for_status()
-        data = resp.json()
-        event = data["events"][0]
-        competition = event["competitions"][0]
-        competitors = competition["competitors"]
-
-        players = {}
-        for c in competitors:
-            linescores = c.get("linescores", [])
-            rounds = sum(1 for r in linescores if r.get("displayValue") and r["displayValue"] != "-")
-            players[c["athlete"]["displayName"]] = {"order": c["order"], "score": c["score"], "rounds_completed": rounds}
-
-        leaderboard = {
-            "event_name": event["name"],
-            "status": competition["status"]["type"]["detail"],
-            "total_players": len(competitors),
-            "completed": event["status"]["type"].get("completed", False),
-            "players": players,
-        }
+        leaderboard = fetch_leaderboard()
     except Exception as e:
         st.error(f"Could not fetch live scores: {e}")
         st.stop()
@@ -314,11 +296,43 @@ elif page == "Leaderboard":
 
     st.divider()
     st.subheader("ESPN Leaderboard")
-    sorted_players = sorted(leaderboard["players"].items(), key=lambda x: x[1]["order"])
-    for name, d in sorted_players:
-        cols = st.columns([1, 3, 1, 1])
-        with cols[0]: st.text(str(d["order"]))
+
+    sorted_items = sorted(leaderboard["players"].items(), key=lambda x: x[1]["order"])
+    max_round = max((r["number"] for _, d in sorted_items for r in d.get("rounds", [])), default=4)
+
+    positions = {}
+    i = 0
+    while i < len(sorted_items):
+        score = sorted_items[i][1]["score"]
+        j = i
+        while j < len(sorted_items) and sorted_items[j][1]["score"] == score:
+            j += 1
+        tied = j - i > 1
+        for k in range(i, j):
+            positions[k] = f"T{i + 1}" if tied else str(i + 1)
+        i = j
+
+    col_w = [1, 2.5, 1] + [1.2] * max_round
+    cols = st.columns(col_w)
+    with cols[0]: st.text("Pos")
+    with cols[1]: st.text("Player")
+    with cols[2]: st.text("To Par")
+    for rn in range(1, max_round + 1):
+        with cols[2 + rn]: st.text(f"R{rn}")
+    st.divider()
+
+    for idx, (name, d) in enumerate(sorted_items):
+        cols = st.columns(col_w)
+        with cols[0]: st.text(positions[idx])
         with cols[1]: st.text(name)
         with cols[2]: st.text(d["score"])
-        with cols[3]: st.text(str(d["rounds_completed"]))
-    st.caption("Auto-refreshes every 2 minutes.")
+        round_map = {r["number"]: r for r in d.get("rounds", [])}
+        for rn in range(1, max_round + 1):
+            r = round_map.get(rn)
+            with cols[2 + rn]:
+                if r is None:
+                    st.text("NA")
+                elif r["complete"]:
+                    st.text(str(r["strokes"]))
+                else:
+                    st.text(f"thru {r['holes_completed']}")

@@ -28,7 +28,7 @@ def calculate_pool_scores(picks_list, leaderboard):
             if player_data is None or player_data["score"] in ("WD", "DQ"):
                 detail["points"] = WD_DQ_POINTS
                 detail["result"] = "WD/DQ"
-            elif not is_final and player_data["rounds_completed"] < 2:
+            elif not is_final and _rounds_completed(player_data) < 2:
                 detail["points"] = 0
                 detail["result"] = "In progress"
             elif not is_final and _missed_cut(player_data, total_players):
@@ -80,9 +80,13 @@ def calculate_pool_scores(picks_list, leaderboard):
     return results
 
 
+def _rounds_completed(player_data):
+    return sum(1 for r in player_data.get("rounds", []) if r["complete"])
+
+
 def _missed_cut(player_data, total_players):
     """Check if a player likely missed the cut (after round 2, not in top ~70 + ties)."""
-    if player_data["rounds_completed"] < 2:
+    if _rounds_completed(player_data) < 2:
         return False
     if player_data["score"] in ("WD", "DQ", "MC"):
         return True
@@ -92,7 +96,7 @@ def _missed_cut(player_data, total_players):
 
 def _not_in_bottom_75_after_day2(player_data, total_players):
     """Check if a short pick is NOT in the bottom 75 after Day 2."""
-    if player_data["rounds_completed"] < 2:
+    if _rounds_completed(player_data) < 2:
         return False
     pos = player_data["order"]
     return pos <= (total_players - 75)
