@@ -113,7 +113,7 @@ if page == "Home":
             st.session_state.page = "Rules"
             st.rerun()
     with col2:
-        if st.button("🏌️ Make Picks", use_container_width=True, type="primary"):
+        if st.button("🏌️ Make Picks", use_container_width=True):
             st.session_state.page = "Make Picks"
             st.rerun()
     with col3:
