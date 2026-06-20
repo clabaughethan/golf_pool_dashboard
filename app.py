@@ -30,21 +30,6 @@ st.markdown("""
         font-size: 0.85rem;
     }
 }
-[data-testid="stHorizontalBlock"] {
-    overflow-x: auto;
-    flex-wrap: nowrap !important;
-}
-[data-testid="stHorizontalBlock"] > div {
-    min-width: 0;
-    flex: 1 1 0;
-}
-[data-testid="stHorizontalBlock"] p,
-[data-testid="stHorizontalBlock"] span {
-    white-space: nowrap;
-    font-size: 0.82rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 </style>
 """, unsafe_allow_html=True)
 
