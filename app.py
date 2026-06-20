@@ -107,7 +107,7 @@ if page == "Home":
 
     st.markdown("---")
     st.subheader("Quick Links")
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("📋 View Rules", use_container_width=True):
             st.session_state.page = "Rules"
@@ -115,6 +115,10 @@ if page == "Home":
     with col2:
         if st.button("🏌️ Make Picks", use_container_width=True, type="primary"):
             st.session_state.page = "Make Picks"
+            st.rerun()
+    with col3:
+        if st.button("🏆 Leaderboard", use_container_width=True):
+            st.session_state.page = "Leaderboard"
             st.rerun()
 
     st.info("Share the pool code with participants so they can submit their picks!")
