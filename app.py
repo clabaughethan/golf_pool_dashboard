@@ -29,10 +29,6 @@ st.markdown("""
         padding: 0.4rem 0.75rem;
         font-size: 0.85rem;
     }
-    [data-testid="stHorizontalBlock"] {
-        overflow-x: auto;
-        flex-wrap: nowrap !important;
-    }
 }
 </style>
 """, unsafe_allow_html=True)
