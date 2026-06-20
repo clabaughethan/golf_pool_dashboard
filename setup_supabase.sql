@@ -34,6 +34,7 @@ DROP POLICY IF EXISTS "Allow public read access on tournaments" ON tournaments;
 DROP POLICY IF EXISTS "Allow public read access on picks" ON picks;
 DROP POLICY IF EXISTS "Allow authenticated insert on picks" ON picks;
 DROP POLICY IF EXISTS "Allow authenticated update on picks" ON picks;
+DROP POLICY IF EXISTS "Allow public delete on picks" ON picks;
 
 -- Policies: allow anonymous read access, authenticated write
 CREATE POLICY "Allow public read access on tournaments"
@@ -50,6 +51,10 @@ CREATE POLICY "Allow authenticated insert on picks"
 
 CREATE POLICY "Allow authenticated update on picks"
   ON picks FOR UPDATE
+  USING (true);
+
+CREATE POLICY "Allow public delete on picks"
+  ON picks FOR DELETE
   USING (true);
 
 -- Insert the US Open 2026 tournament
