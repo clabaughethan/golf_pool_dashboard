@@ -298,7 +298,10 @@ elif page == "Leaderboard":
     st.subheader("ESPN Leaderboard")
 
     sorted_items = sorted(leaderboard["players"].items(), key=lambda x: x[1]["order"])
-    max_round = max((r["number"] for _, d in sorted_items for r in d.get("rounds", [])), default=4)
+    max_round = max(
+        (r["number"] for _, d in sorted_items for r in d.get("rounds", []) if not r["dnp"]),
+        default=cur_round,
+    )
 
     positions = {}
     i = 0
