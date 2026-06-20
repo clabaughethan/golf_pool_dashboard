@@ -312,17 +312,19 @@ elif page == "Leaderboard":
             positions[k] = f"T{i + 1}" if tied else str(i + 1)
         i = j
 
-    col_w = [1, 2.5, 1, 1.2] + [1.2] * max_round
+    cur_round = leaderboard["round"]
+    rounds_to_show = [rn for rn in range(1, max_round + 1) if rn != cur_round]
+
+    col_w = [1, 2.5, 1, 1.2] + [1.2] * len(rounds_to_show)
     cols = st.columns(col_w)
     with cols[0]: st.text("Pos")
     with cols[1]: st.text("Player")
     with cols[2]: st.text("To Par")
-    with cols[3]: st.text(f"Rd {leaderboard['round']}")
-    for rn in range(1, max_round + 1):
-        with cols[3 + rn]: st.text(f"R{rn}")
+    with cols[3]: st.text(f"Rd {cur_round}")
+    for i, rn in enumerate(rounds_to_show):
+        with cols[4 + i]: st.text(f"R{rn}")
     st.divider()
 
-    cur_round = leaderboard["round"]
     for idx, (name, d) in enumerate(sorted_items):
         cols = st.columns(col_w)
         with cols[0]: st.text(positions[idx])
@@ -337,9 +339,9 @@ elif page == "Leaderboard":
                 st.text(str(cur["strokes"]))
             else:
                 st.text(f"thru {cur['holes_completed']}")
-        for rn in range(1, max_round + 1):
+        for i, rn in enumerate(rounds_to_show):
             r = round_map.get(rn)
-            with cols[3 + rn]:
+            with cols[4 + i]:
                 if r is None:
                     st.text("NA")
                 elif r["complete"]:
