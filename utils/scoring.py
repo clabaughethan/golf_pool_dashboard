@@ -36,7 +36,7 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
             if player_data is None or player_data["score"] in ("WD", "DQ"):
                 detail["points"] = WD_DQ_POINTS
                 detail["result"] = "WD/DQ"
-            elif not is_final and _rounds_completed(player_data) < 2:
+            elif not is_final and _rounds_completed(player_data) < 2 and player_name in made_cut:
                 detail["points"] = 0
                 detail["result"] = "In progress"
             elif not is_final and _missed_cut(player_name, total_players, made_cut):
