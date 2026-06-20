@@ -11,6 +11,28 @@ from utils.config import load_tournament_configs
 
 st.set_page_config(page_title="Wasylak Golf Pools App", page_icon="⛳", layout="wide", initial_sidebar_state="expanded")
 
+st.markdown("""
+<style>
+@media (max-width: 768px) {
+    [data-testid="stSidebar"][aria-expanded="true"] {
+        width: 280px !important;
+        min-width: 280px !important;
+    }
+    [data-testid="stSidebar"][aria-expanded="false"] {
+        width: 0px !important;
+        min-width: 0px !important;
+    }
+    [data-testid="stSidebarNav"] {
+        padding-top: 0.5rem;
+    }
+    section[data-testid="stSidebar"] button {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.85rem;
+    }
+}
+</style>
+""", unsafe_allow_html=True)
+
 
 def get_sb():
     if "supabase" not in st.session_state:
