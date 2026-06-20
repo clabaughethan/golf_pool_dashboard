@@ -341,7 +341,8 @@ elif page == "Leaderboard":
             live = False
 
         if live:
-            st_autorefresh(interval=120_000, key="refresh")
+            if not leaderboard["completed"]:
+                st_autorefresh(interval=120_000, key="refresh")
             if leaderboard["completed"]:
                 sb.table("leaderboard_snapshots").upsert({
                     "tournament_id": tournament_id,
