@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 import streamlit as st
 import requests
 from pathlib import Path
@@ -150,6 +151,16 @@ elif page == "Make Picks":
     if tournament.get("status") in ("locked", "final"):
         st.warning("This tournament is locked. Picks can no longer be submitted or edited.")
         st.stop()
+
+    start_time = tournament.get("start_time")
+    if start_time:
+        if isinstance(start_time, str):
+            start_time = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
+        if start_time.tzinfo is None:
+            start_time = start_time.replace(tzinfo=timezone.utc)
+        if datetime.now(timezone.utc) >= start_time:
+            st.warning("This tournament has started. Picks can no longer be submitted or edited.")
+            st.stop()
 
     if "authenticated" not in st.session_state:
         st.session_state.authenticated = False
