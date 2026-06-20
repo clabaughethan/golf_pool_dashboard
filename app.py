@@ -106,27 +106,37 @@ elif page == "Rules":
     groups = config["player_groups"]
 
     st.subheader("How to Pick")
-    st.markdown("""
-| Selection | # of Picks | From |
-|-----------|------------|------|
-| Players to **WIN** | 2 each from Groups 1, 2, and 3 | (6 total) |
-| Players to **WIN** | 1 each from Groups 4 and 5 | (2 total) |
-| Players to **SHORT** (lose) | 2 | Full field (any group) |
-""")
+
+    win_groups = rules.get("win_picks_per_group", {})
+    total_win = sum(win_groups.values())
+    short_count = rules.get("short_picks", 0)
+
+    rows = []
+    for g, count in win_groups.items():
+        rows.append(f"| Players to **WIN** | {count} from Group {g} |")
+    if short_count:
+        rows.append(f"| Players to **SHORT** (lose) | {short_count} | Full field (any group) |")
+    st.markdown("\n".join([
+        "| Selection | # of Picks | From |",
+        "|-----------|------------|------|",
+    ] + rows))
 
     st.subheader("Scoring (Least Points Wins)")
-    st.markdown("""
-| Scenario | Points |
-|----------|--------|
-| **Win pick** finishes in position X | X points (1st = 1 pt, 27th = 27 pts, etc.) |
-| **Win pick** misses the cut | 75 points |
-| **Short pick** finishes X from last | X points (last = 1 pt, 30th-to-last = 30 pts, etc.) |
-| **Short pick** not in bottom 75 after Day 2 | 75 points |
-| **WD or DQ** (any pick) | 75 points |
-""")
+    scoring_rows = []
+    scoring_rows.append("| **Win pick** finishes in position X | X points (1st = 1 pt, 27th = 27 pts, etc.) |")
+    scoring_rows.append("| **Win pick** misses the cut | 75 points |")
+    if short_count:
+        scoring_rows.append("| **Short pick** finishes X from last | X points (last = 1 pt, 30th-to-last = 30 pts, etc.) |")
+        scoring_rows.append("| **Short pick** not in bottom 75 after Day 2 | 75 points |")
+    scoring_rows.append("| **WD or DQ** (any pick) | 75 points |")
+    st.markdown("\n".join([
+        "| Scenario | Points |",
+        "|----------|--------|",
+    ] + scoring_rows))
 
     st.subheader("Key Notes")
-    st.markdown("- Short picks are **not** group-restricted — you can short anyone in the field.")
+    if short_count:
+        st.markdown("- Short picks are **not** group-restricted — you can short anyone in the field.")
     st.markdown("- Picks are locked once the tournament begins.")
     st.markdown("- Submit your picks on the **Make Picks** page using your pool code.")
 
@@ -275,15 +285,37 @@ elif page == "Leaderboard":
 
     st.title("🏆 Live Leaderboard")
     st.divider()
-    st_autorefresh(interval=120_000, key="refresh")
 
-    try:
-        leaderboard = fetch_leaderboard()
-    except Exception as e:
-        st.error(f"Could not fetch live scores: {e}")
-        st.stop()
+    sb = get_sb()
 
-    st.subheader(f"{leaderboard['event_name']} — {leaderboard['status']}")
+    snapshot = sb.table("leaderboard_snapshots").select("*").eq("tournament_id", tournament_id).execute().data
+    if snapshot:
+        snap = snapshot[0]
+        leaderboard = {
+            "event_name": snap["event_name"],
+            "status": snap["status"],
+            "total_players": len(snap["players"]),
+            "completed": True,
+            "players": snap["players"],
+        }
+        st.subheader(f"{leaderboard['event_name']} — {leaderboard['status']}")
+    else:
+        st_autorefresh(interval=120_000, key="refresh")
+        try:
+            leaderboard = fetch_leaderboard()
+        except Exception as e:
+            st.error(f"Could not fetch live scores: {e}")
+            st.stop()
+
+        if leaderboard["completed"]:
+            sb.table("leaderboard_snapshots").upsert({
+                "tournament_id": tournament_id,
+                "event_name": leaderboard["event_name"],
+                "status": leaderboard["status"],
+                "players": leaderboard["players"],
+            }, on_conflict="tournament_id").execute()
+
+        st.subheader(f"{leaderboard['event_name']} — {leaderboard['status']}")
 
     sb = get_sb()
     picks_list = sb.table("picks").select("*").eq("tournament_id", tournament_id).execute().data
