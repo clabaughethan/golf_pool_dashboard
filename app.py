@@ -11,10 +11,70 @@ st.set_page_config(page_title="Wasylak Golf Pools App", page_icon="⛳", layout=
 
 st.markdown("""
 <style>
-section[data-testid="stSidebar"] div[data-testid="stSelectbox"] label {
-    font-size: 1rem !important;
-    font-weight: 600 !important;
+/* ── Sidebar ── */
+section[data-testid="stSidebar"] > div:first-child { background: #0d1117; }
+section[data-testid="stSidebar"] div[data-testid="stSelectbox"] label { font-size: 1rem !important; font-weight: 600 !important; }
+section[data-testid="stSidebar"] .stButton button {
+    border-radius: 8px; border: none; text-align: left; padding: 0.4rem 0.8rem;
+    transition: all 0.15s ease; background: transparent; color: #e6edf3 !important;
 }
+section[data-testid="stSidebar"] .stButton button:hover:not(:disabled) { background: #161b22; }
+section[data-testid="stSidebar"] .stButton button:disabled { opacity: 0.4; background: transparent !important; }
+section[data-testid="stSidebar"] hr { margin: 0.5rem 0; }
+
+/* ── Buttons ── */
+.stButton button { border-radius: 8px; transition: all 0.15s ease; }
+div.stButton > button[kind="primary"] { background: linear-gradient(135deg, #2ea043 0%, #238636 100%); border: none; }
+
+/* ── Expanders (scoreboard cards) ── */
+.streamlit-expanderHeader { border-radius: 8px !important; }
+.streamlit-expanderContent { border-bottom-left-radius: 8px !important; border-bottom-right-radius: 8px !important; }
+details.streamlit-expander {
+    border: 1px solid #21262d; border-radius: 10px; margin-bottom: 0.5rem;
+    background: #0d1117; transition: border-color 0.15s ease;
+}
+details.streamlit-expander[open] { border-color: #2ea043; }
+
+/* ── Title area ── */
+h1, h2, h3 { letter-spacing: -0.02em; }
+.stApp > header + div h1 { color: #2ea043 !important; }
+
+/* ── Dividers ── */
+hr { border-color: #21262d !important; }
+
+/* ── Selectbox ── */
+div[data-testid="stSelectbox"] > div > div { border-radius: 8px; border-color: #30363d; }
+
+/* ── Text input ── */
+div[data-testid="stTextInput"] input { border-radius: 8px; border-color: #30363d; }
+
+/* ── Info/warning/success boxes ── */
+div.stAlert { border-radius: 8px; border: none; }
+div.stAlert[data-baseweb="notification"] { border-radius: 8px; }
+
+/* ── Multiselect ── */
+div[data-testid="stMultiSelect"] > div > div { border-radius: 8px; border-color: #30363d; }
+
+/* ── Columns spacing ── */
+div[data-testid="column"] { gap: 1rem; }
+
+/* ── Tables ── */
+div[data-testid="stTable"] table { border-collapse: separate; border-spacing: 0 2px; }
+div[data-testid="stTable"] th { background: transparent !important; color: #8b949e; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #21262d; }
+div[data-testid="stTable"] td { border: none; padding: 0.25rem 0.5rem; }
+div[data-testid="stTable"] tr:hover td { background: #161b22; border-radius: 6px; }
+
+/* ── Expander rank badges ── */
+details.streamlit-expander[open] .streamlit-expanderHeader:before { content: '▼ '; }
+
+/* ── Leaderboard list ── */
+div.row-widget.stColumns > div:first-child { font-weight: 600; color: #8b949e; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #0d1117; }
+::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #484f58; }
 </style>
 """, unsafe_allow_html=True)
 
