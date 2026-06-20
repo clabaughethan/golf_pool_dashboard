@@ -109,16 +109,9 @@ if page == "Home":
 
     st.markdown("---")
     st.subheader("How It Works")
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown("**1. Make Your Picks**")
-        st.markdown("Select 8 win picks and 2 short picks. Enter the pool code to submit.")
-    with col2:
-        st.markdown("**2. Tournament Starts**")
-        st.markdown("Picks lock at the first tee time. No changes after that.")
-    with col3:
-        st.markdown("**3. Live Scoring**")
-        st.markdown("Standings update automatically from ESPN every 2 minutes.")
+    st.markdown("**1. Make Your Picks** — Select 8 win picks and 2 short picks. Enter the pool code to submit.")
+    st.markdown("**2. Tournament Starts** — Picks lock at the first tee time. No changes after that.")
+    st.markdown("**3. Live Scoring** — Standings update automatically from ESPN every 2 minutes.")
 
     st.markdown("---")
     st.subheader("Quick Links")
