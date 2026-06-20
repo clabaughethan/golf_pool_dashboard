@@ -21,7 +21,11 @@ def calculate_pool_scores(picks_list, leaderboard):
         score = 0
         pick_details = []
 
-        for player_name in entry["win_picks"]:
+        wp = entry["win_picks"]
+        all_win = wp.values() if isinstance(wp, dict) else wp
+        flat_win = [p for group in all_win for p in (group if isinstance(group, list) else [group])]
+
+        for player_name in flat_win:
             player_data = players.get(player_name)
             detail = {"name": player_name, "type": "win", "points": 0}
 
