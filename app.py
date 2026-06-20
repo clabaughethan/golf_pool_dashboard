@@ -81,13 +81,27 @@ if page == "Home":
     picks = get_sb().table("picks").select("*", count="exact").eq("tournament_id", selected_id).execute()
     participant_count = picks.count if hasattr(picks, 'count') else len(picks.data)
 
-    all_tournaments = get_sb().table("tournaments").select("*").execute().data
-    tournament = next((t for t in all_tournaments if t["id"] == selected_id), None)
-    status = tournament.get("status", "open") if tournament else "open"
+    start_time = start_times.get(selected_id, "")
+    if start_time:
+        try:
+            t = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
+            if datetime.now(timezone.utc) < t:
+                status = "Upcoming"
+            else:
+                try:
+                    lb = fetch_leaderboard()
+                    status = "Completed" if lb["completed"] else "In Progress"
+                except Exception:
+                    snapshot = get_sb().table("leaderboard_snapshots").select("status").eq("tournament_id", selected_id).execute().data
+                    status = snapshot[0]["status"] if snapshot else "In Progress"
+        except Exception:
+            status = "Open"
+    else:
+        status = "Open"
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.metric("Status", status.capitalize())
+        st.metric("Status", status)
     with col2:
         st.metric("Participants", participant_count)
     with col3:
