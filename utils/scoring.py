@@ -18,7 +18,7 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
     is_final = leaderboard["completed"]
     cut_line = (rules or {}).get("cut_line", 60)
 
-    made_cut = _compute_made_cut(players, cut_line)
+    made_cut = _resolve_made_cut(players, cut_line)
 
     results = []
     for entry in picks_list:
@@ -39,12 +39,9 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
             elif not is_final and _rounds_completed(player_data) < 2 and player_name in made_cut:
                 detail["points"] = 0
                 detail["result"] = "In progress"
-            elif not is_final and _missed_cut(player_name, total_players, made_cut):
+            elif player_name not in made_cut:
                 detail["points"] = MISSED_CUT_POINTS
                 detail["result"] = "Missed Cut"
-            elif is_final and player_data["score"] in ("WD", "DQ", "MC"):
-                detail["points"] = WD_DQ_POINTS
-                detail["result"] = player_data["score"]
             else:
                 pos = player_data["order"]
                 detail["points"] = pos
@@ -60,13 +57,12 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
             if player_data is None or player_data["score"] in ("WD", "DQ"):
                 detail["points"] = WD_DQ_POINTS
                 detail["result"] = "WD/DQ"
+            elif player_name not in made_cut:
+                detail["points"] = MISSED_CUT_POINTS
+                detail["result"] = "Missed Cut"
             elif not is_final and _not_in_bottom_75_after_day2(player_data, total_players):
                 detail["points"] = SHORT_NOT_BOTTOM_75_POINTS
                 detail["result"] = "Not in bottom 75"
-            elif is_final:
-                pos = player_data["order"]
-                detail["points"] = total_players - pos + 1
-                detail["result"] = f"#{total_players - pos + 1} from last"
             else:
                 pos = player_data["order"]
                 detail["points"] = total_players - pos + 1
@@ -90,6 +86,21 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
 
 def _rounds_completed(player_data):
     return sum(1 for r in player_data.get("rounds", []) if r["complete"])
+
+
+def _resolve_made_cut(players, cut_line):
+    """Determine which players made the cut.
+
+    If any player has a 'made_cut' boolean in their snapshot data,
+    use those directly (snapshot is source of truth for past tournaments).
+    Otherwise fall back to computing from R2 totals (for live ESPN data).
+    """
+    has_made_cut_field = any(
+        isinstance(p.get("made_cut"), bool) for p in players.values()
+    )
+    if has_made_cut_field:
+        return {name for name, p in players.items() if p.get("made_cut")}
+    return _compute_made_cut(players, cut_line)
 
 
 def _compute_made_cut(players, cut_line):
