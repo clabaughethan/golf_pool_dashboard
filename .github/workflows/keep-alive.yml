@@ -4,7 +4,7 @@ on:
   schedule:
     # Streamlit free tier sleeps after 12h of inactivity.
     # A simple curl doesn't wake it (returns static shell only).
-    # Playwright visits the page with a real browser to boot the Python process.
+    # Playwright visits with a real browser to boot the Python process.
     - cron: "0 */6 * * *"
   workflow_dispatch:
 
@@ -21,26 +21,27 @@ jobs:
           pip install playwright -q
           playwright install chromium --with-deps -q
 
-      - name: Visit App (wakes if asleep)
+      - name: Write wake script
         run: |
-          python -c "
+          cat > /tmp/wake.py << 'PYEOF'
 import playwright.sync_api as pw
-import sys
 
-url = 'https://wasylakgolfpoolapp.streamlit.app/'
+url = "https://wasylakgolfpoolapp.streamlit.app/"
 
 with pw.sync_playwright() as p:
     browser = p.chromium.launch(headless=True)
     page = browser.new_page()
-    page.goto(url, wait_until='networkidle', timeout=120000)
+    page.goto(url, wait_until="networkidle", timeout=120000)
 
-    # If the app was asleep, click the wake-up button
-    wake_btn = page.locator('text=get this app back up')
+    wake_btn = page.locator("text=get this app back up")
     if wake_btn.is_visible(timeout=5000):
-        print('App was asleep — clicking wake-up button...')
+        print("App was asleep -- clicking wake-up button...")
         wake_btn.click()
-        page.wait_for_load_state('networkidle', timeout=60000)
+        page.wait_for_load_state("networkidle", timeout=60000)
 
-    print(f'App is alive: {page.title()}')
+    print(f"App is alive: {page.title()}")
     browser.close()
-"
+PYEOF
+
+      - name: Visit App (wakes if asleep)
+        run: python /tmp/wake.py
