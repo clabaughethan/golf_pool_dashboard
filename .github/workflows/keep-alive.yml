@@ -2,9 +2,6 @@ name: Keep Alive
 
 on:
   schedule:
-    # Streamlit free tier sleeps after 12h of inactivity.
-    # A simple curl doesn't wake it (returns static shell only).
-    # Playwright visits with a real browser to boot the Python process.
     - cron: "0 */6 * * *"
   workflow_dispatch:
 
@@ -12,6 +9,8 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -21,27 +20,5 @@ jobs:
           pip install playwright -q
           playwright install chromium --with-deps -q
 
-      - name: Write wake script
-        run: |
-          cat > /tmp/wake.py << 'PYEOF'
-import playwright.sync_api as pw
-
-url = "https://wasylakgolfpoolapp.streamlit.app/"
-
-with pw.sync_playwright() as p:
-    browser = p.chromium.launch(headless=True)
-    page = browser.new_page()
-    page.goto(url, wait_until="networkidle", timeout=120000)
-
-    wake_btn = page.locator("text=get this app back up")
-    if wake_btn.is_visible(timeout=5000):
-        print("App was asleep -- clicking wake-up button...")
-        wake_btn.click()
-        page.wait_for_load_state("networkidle", timeout=60000)
-
-    print(f"App is alive: {page.title()}")
-    browser.close()
-PYEOF
-
       - name: Visit App (wakes if asleep)
-        run: python /tmp/wake.py
+        run: python .github/scripts/wake.py
