@@ -88,12 +88,15 @@ if page == "Home":
             if datetime.now(timezone.utc) < t:
                 status = "Upcoming"
             else:
-                try:
-                    lb = fetch_leaderboard()
-                    status = "Completed" if lb["completed"] else "In Progress"
-                except Exception:
-                    snapshot = get_sb().table("leaderboard_snapshots").select("status").eq("tournament_id", selected_id).execute().data
-                    status = snapshot[0]["status"] if snapshot else "In Progress"
+                snapshot = get_sb().table("leaderboard_snapshots").select("status").eq("tournament_id", selected_id).execute().data
+                if snapshot:
+                    status = snapshot[0]["status"]
+                else:
+                    try:
+                        lb = fetch_leaderboard()
+                        status = "Completed" if lb["completed"] else "In Progress"
+                    except Exception:
+                        status = "In Progress"
         except Exception:
             status = "Open"
     else:
