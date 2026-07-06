@@ -12,16 +12,20 @@ def _get_r2_total(player_data):
     )
 
 
-def _build_mc_from_last(players):
+def _build_mc_from_last(players, made_cut):
     """Build a dict mapping MC player name -> position from last among MC.
 
     Position from last = number of MC players with a higher (worse) R1+R2 total, + 1.
     Players tied at the same R1+R2 get the same value.
     Excludes WD/DQ players from the MC count.
     """
+    has_made_cut_field = any(
+        isinstance(p.get("made_cut"), bool) for p in players.values()
+    )
     mc_players = {}
     for name, p in players.items():
-        if p.get("made_cut") is False and p.get("score", "") not in ("WD", "DQ"):
+        is_mc = not p.get("made_cut") if has_made_cut_field else name not in made_cut
+        if is_mc and p.get("score", "") not in ("WD", "DQ"):
             r2 = _get_r2_total(p)
             if r2 > 0:
                 mc_players[name] = r2
@@ -99,7 +103,7 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
     cut_line = (rules or {}).get("cut_line", 60)
 
     made_cut = _resolve_made_cut(players, cut_line)
-    mc_from_last = _build_mc_from_last(players)
+    mc_from_last = _build_mc_from_last(players, made_cut)
 
     results = []
     for entry in picks_list:
