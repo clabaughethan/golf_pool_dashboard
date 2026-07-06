@@ -15,10 +15,17 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Cache Playwright browsers
+        id: cache-playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}
+
       - name: Install Playwright
         run: |
-          pip install playwright -q
-          playwright install chromium --with-deps -q
+          pip install playwright
+          playwright install chromium --with-deps
 
       - name: Visit App (wakes if asleep)
         run: python .github/scripts/wake.py
