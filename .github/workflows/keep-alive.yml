@@ -2,17 +2,45 @@ name: Keep Alive
 
 on:
   schedule:
-    # Every 14 minutes. Streamlit free tier sleeps after ~7 days idle.
-    # Pinging the app loads a page, which queries Supabase, keeping both alive.
-    - cron: "*/14 * * * *"
+    # Streamlit free tier sleeps after 12h of inactivity.
+    # A simple curl doesn't wake it (returns static shell only).
+    # Playwright visits the page with a real browser to boot the Python process.
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Streamlit App
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Playwright
         run: |
-          curl -s -o /dev/null -w "%{http_code}\n" \
-            --max-time 90 \
-            "https://wasylakgolfpoolapp.streamlit.app/" || true
+          pip install playwright -q
+          playwright install chromium --with-deps -q
+
+      - name: Visit App (wakes if asleep)
+        run: |
+          python -c "
+import playwright.sync_api as pw
+import sys
+
+url = 'https://wasylakgolfpoolapp.streamlit.app/'
+
+with pw.sync_playwright() as p:
+    browser = p.chromium.launch(headless=True)
+    page = browser.new_page()
+    page.goto(url, wait_until='networkidle', timeout=120000)
+
+    # If the app was asleep, click the wake-up button
+    wake_btn = page.locator('text=get this app back up')
+    if wake_btn.is_visible(timeout=5000):
+        print('App was asleep — clicking wake-up button...')
+        wake_btn.click()
+        page.wait_for_load_state('networkidle', timeout=60000)
+
+    print(f'App is alive: {page.title()}')
+    browser.close()
+"
