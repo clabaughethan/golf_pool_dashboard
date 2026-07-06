@@ -335,6 +335,7 @@ elif page == "Leaderboard":
             "total_players": len(snap["players"]),
             "completed": True,
             "players": snap["players"],
+            "round": 4,
         }
         st.subheader(f"{leaderboard['event_name']} — {leaderboard['status']}")
     else:
@@ -412,6 +413,7 @@ elif page == "Leaderboard":
                             "total_players": len(final_players),
                             "completed": True,
                             "players": final_players,
+                            "round": 4,
                         }
                         st.success("Leaderboard saved!")
                         st.rerun()
