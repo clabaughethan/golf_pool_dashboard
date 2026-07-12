@@ -6,10 +6,10 @@
       "1": 2,
       "2": 2,
       "3": 2,
-      "4": 1,
-      "5": 1
+      "4": 2,
+      "5": 2
     },
-    "short_picks": 2,
+    "short_picks": 0,
     "missed_cut_points": 75,
     "wd_dq_points": 75,
     "short_not_bottom_75_points": 75,
@@ -17,79 +17,469 @@
   },
   "player_groups": {
     "1": [
-      {"name": "Scottie Scheffler", "owgr": 1, "odds": "+400"},
-      {"name": "Rory McIlroy", "owgr": 2, "odds": "+650"},
-      {"name": "Jon Rahm", "owgr": 8, "odds": "+800"},
-      {"name": "Xander Schauffele", "owgr": 3, "odds": "+900"},
-      {"name": "Ludvig Aberg", "owgr": 5, "odds": "+1100"},
-      {"name": "Bryson DeChambeau", "owgr": 10, "odds": "+1400"},
-      {"name": "Collin Morikawa", "owgr": 4, "odds": "+1600"},
-      {"name": "Justin Thomas", "owgr": 7, "odds": "+1800"},
-      {"name": "Wyndham Clark", "owgr": 9, "odds": "+2000"},
-      {"name": "Matt Fitzpatrick", "owgr": 11, "odds": "+2200"}
+      {
+        "name": "Scottie Scheffler",
+        "owgr": 1,
+        "odds": "+410"
+      },
+      {
+        "name": "Jon Rahm",
+        "owgr": 30,
+        "odds": "+850"
+      },
+      {
+        "name": "Rory McIlroy",
+        "owgr": 2,
+        "odds": "+1025"
+      },
+      {
+        "name": "Bryson DeChambeau",
+        "owgr": 24,
+        "odds": "+1100"
+      },
+      {
+        "name": "Ludvig Aberg",
+        "owgr": 17,
+        "odds": "+1750"
+      },
+      {
+        "name": "Xander Schauffele",
+        "owgr": 10,
+        "odds": "+1850"
+      },
+      {
+        "name": "Cameron Young",
+        "owgr": 3,
+        "odds": "+2400"
+      },
+      {
+        "name": "Tommy Fleetwood",
+        "owgr": 4,
+        "odds": "+2500"
+      },
+      {
+        "name": "Matt Fitzpatrick",
+        "owgr": 6,
+        "odds": "+2600"
+      },
+      {
+        "name": "Collin Morikawa",
+        "owgr": 7,
+        "odds": "+3100"
+      }
     ],
     "2": [
-      {"name": "Viktor Hovland", "owgr": 14, "odds": "+2500"},
-      {"name": "Tommy Fleetwood", "owgr": 12, "odds": "+2500"},
-      {"name": "Sam Burns", "owgr": 15, "odds": "+2800"},
-      {"name": "Patrick Cantlay", "owgr": 16, "odds": "+3000"},
-      {"name": "Cameron Young", "owgr": 13, "odds": "+3000"},
-      {"name": "Harris English", "owgr": 18, "odds": "+3500"},
-      {"name": "Hideki Matsuyama", "owgr": 17, "odds": "+3500"},
-      {"name": "Corey Conners", "owgr": 22, "odds": "+4000"},
-      {"name": "Jordan Spieth", "owgr": 25, "odds": "+4000"},
-      {"name": "J.J. Spaun", "owgr": 9, "odds": "+4000"},
-      {"name": "Keegan Bradley", "owgr": 20, "odds": "+4500"},
-      {"name": "Aaron Rai", "owgr": 19, "odds": "+5000"},
-      {"name": "Jason Day", "owgr": 28, "odds": "+5000"},
-      {"name": "Sepp Straka", "owgr": 21, "odds": "+5000"}
+      {
+        "name": "Justin Rose",
+        "owgr": 9,
+        "odds": "+3600"
+      },
+      {
+        "name": "Jordan Spieth",
+        "owgr": 61,
+        "odds": "+3800"
+      },
+      {
+        "name": "Brooks Koepka",
+        "owgr": 169,
+        "odds": "+3800"
+      },
+      {
+        "name": "Hideki Matsuyama",
+        "owgr": 14,
+        "odds": "+3900"
+      },
+      {
+        "name": "Robert MacIntyre",
+        "owgr": 8,
+        "odds": "+4000"
+      },
+      {
+        "name": "Russell Henley",
+        "owgr": 12,
+        "odds": "+4200"
+      },
+      {
+        "name": "Chris Gotterup",
+        "owgr": 11,
+        "odds": "+4300"
+      },
+      {
+        "name": "Patrick Reed",
+        "owgr": 23,
+        "odds": "+4500"
+      },
+      {
+        "name": "Viktor Hovland",
+        "owgr": 22,
+        "odds": "+4600"
+      },
+      {
+        "name": "Si Woo Kim",
+        "owgr": 28,
+        "odds": "+4700"
+      },
+      {
+        "name": "Min Woo Lee",
+        "owgr": 25,
+        "odds": "+5400"
+      },
+      {
+        "name": "Justin Thomas",
+        "owgr": 15,
+        "odds": "+5500"
+      }
     ],
     "3": [
-      {"name": "Robert MacIntyre", "owgr": 23, "odds": "+5500"},
-      {"name": "Russell Henley", "owgr": 26, "odds": "+6000"},
-      {"name": "Chris Gotterup", "owgr": 24, "odds": "+6000"},
-      {"name": "Alex Noren", "owgr": 30, "odds": "+6500"},
-      {"name": "Ryan Fox", "owgr": 32, "odds": "+7000"},
-      {"name": "Nico Echavarria", "owgr": 29, "odds": "+7000"},
-      {"name": "Tyrrell Hatton", "owgr": 27, "odds": "+7000"},
-      {"name": "Akshay Bhatia", "owgr": 33, "odds": "+7500"},
-      {"name": "Jacob Bridgeman", "owgr": 35, "odds": "+8000"},
-      {"name": "Max Greyserman", "owgr": 38, "odds": "+8000"},
-      {"name": "Maverick McNealy", "owgr": 34, "odds": "+8000"},
-      {"name": "Ryan Gerard", "owgr": 36, "odds": "+8500"},
-      {"name": "Daniel Berger", "owgr": 40, "odds": "+9000"},
-      {"name": "Sam Stevens", "owgr": 42, "odds": "+10000"},
-      {"name": "Michael Kim", "owgr": 37, "odds": "+10000"},
-      {"name": "Michael Brennan", "owgr": 45, "odds": "+10000"},
-      {"name": "Cameron Smith", "owgr": 50, "odds": "+10000"},
-      {"name": "Dustin Johnson", "owgr": 60, "odds": "+10000"},
-      {"name": "Gary Woodland", "owgr": 44, "odds": "+12000"}
+      {
+        "name": "Patrick Cantlay",
+        "owgr": 35,
+        "odds": "+5700"
+      },
+      {
+        "name": "Adam Scott",
+        "owgr": 53,
+        "odds": "+6200"
+      },
+      {
+        "name": "Akshay Bhatia",
+        "owgr": 21,
+        "odds": "+6600"
+      },
+      {
+        "name": "Sepp Straka",
+        "owgr": 13,
+        "odds": "+6700"
+      },
+      {
+        "name": "Tyrrell Hatton",
+        "owgr": 31,
+        "odds": "+6900"
+      },
+      {
+        "name": "Jason Day",
+        "owgr": 41,
+        "odds": "+6900"
+      },
+      {
+        "name": "Jake Knapp",
+        "owgr": 42,
+        "odds": "+6900"
+      },
+      {
+        "name": "Shane Lowry",
+        "owgr": 32,
+        "odds": "+7000"
+      },
+      {
+        "name": "Sam Burns",
+        "owgr": 33,
+        "odds": "+7200"
+      },
+      {
+        "name": "Corey Conners",
+        "owgr": 44,
+        "odds": "+8200"
+      },
+      {
+        "name": "Nicolai Hojgaard",
+        "owgr": 36,
+        "odds": "+8400"
+      },
+      {
+        "name": "J.J. Spaun",
+        "owgr": 5,
+        "odds": "+8800"
+      },
+      {
+        "name": "Kurt Kitayama",
+        "owgr": 34,
+        "odds": "+8800"
+      },
+      {
+        "name": "Jacob Bridgeman",
+        "owgr": 18,
+        "odds": "+9400"
+      },
+      {
+        "name": "Maverick McNealy",
+        "owgr": 27,
+        "odds": "+9800"
+      }
     ],
     "4": [
-      {"name": "Brian Campbell", "owgr": 55, "odds": "+15000"},
-      {"name": "Nicolai Hojgaard", "owgr": 48, "odds": "+15000"},
-      {"name": "Sami Valimaki", "owgr": 52, "odds": "+15000"},
-      {"name": "Patrick Reed", "owgr": 65, "odds": "+15000"},
-      {"name": "Sergio Garcia", "owgr": 70, "odds": "+20000"},
-      {"name": "Davis Riley", "owgr": 58, "odds": "+20000"},
-      {"name": "Nick Taylor", "owgr": 62, "odds": "+20000"},
-      {"name": "Matt McCarty", "owgr": 53, "odds": "+20000"},
-      {"name": "Fred Couples", "owgr": null, "odds": "+25000"},
-      {"name": "Bubba Watson", "owgr": null, "odds": "+25000"},
-      {"name": "Charl Schwartzel", "owgr": null, "odds": "+25000"},
-      {"name": "Danny Willett", "owgr": null, "odds": "+25000"},
-      {"name": "Adam Scott", "owgr": null, "odds": "+25000"},
-      {"name": "Vijay Singh", "owgr": null, "odds": "+50000"},
-      {"name": "Mike Weir", "owgr": null, "odds": "+50000"},
-      {"name": "Angel Cabrera", "owgr": null, "odds": "+50000"}
+      {
+        "name": "Cameron Smith",
+        "owgr": 222,
+        "odds": "+10000"
+      },
+      {
+        "name": "Harris English",
+        "owgr": 20,
+        "odds": "+10500"
+      },
+      {
+        "name": "Ben Griffin",
+        "owgr": 16,
+        "odds": "+11000"
+      },
+      {
+        "name": "Daniel Berger",
+        "owgr": 38,
+        "odds": "+11000"
+      },
+      {
+        "name": "Gary Woodland",
+        "owgr": 52,
+        "odds": "+11000"
+      },
+      {
+        "name": "Max Homa",
+        "owgr": 163,
+        "odds": "+11500"
+      },
+      {
+        "name": "Sungjae Im",
+        "owgr": 71,
+        "odds": "+12000"
+      },
+      {
+        "name": "Rasmus Hojgaard",
+        "owgr": 57,
+        "odds": "+13000"
+      },
+      {
+        "name": "Keegan Bradley",
+        "owgr": 26,
+        "odds": "+14000"
+      },
+      {
+        "name": "Marco Penge",
+        "owgr": 37,
+        "odds": "+16000"
+      },
+      {
+        "name": "Harry Hall",
+        "owgr": 62,
+        "odds": "+16000"
+      },
+      {
+        "name": "Alex Noren",
+        "owgr": 19,
+        "odds": "+16500"
+      },
+      {
+        "name": "Ryan Gerard",
+        "owgr": 29,
+        "odds": "+17000"
+      },
+      {
+        "name": "Aaron Rai",
+        "owgr": 39,
+        "odds": "+19500"
+      },
+      {
+        "name": "Nick Taylor",
+        "owgr": 67,
+        "odds": "+19500"
+      },
+      {
+        "name": "Brian Harman",
+        "owgr": 50,
+        "odds": "+20000"
+      },
+      {
+        "name": "Sam Stevens",
+        "owgr": 45,
+        "odds": "+21000"
+      },
+      {
+        "name": "Ryan Fox",
+        "owgr": 51,
+        "odds": "+22500"
+      },
+      {
+        "name": "Wyndham Clark",
+        "owgr": 78,
+        "odds": "+22500"
+      },
+      {
+        "name": "Sergio Garcia",
+        "owgr": 345,
+        "odds": "+22500"
+      }
     ],
     "5": [
-      {"name": "Ethan Fang", "owgr": null, "odds": "+50000"},
-      {"name": "Mason Howell", "owgr": null, "odds": "+50000"},
-      {"name": "Jackson Herrington", "owgr": null, "odds": "+50000"},
-      {"name": "Brandon Holtz", "owgr": null, "odds": "+50000"},
-      {"name": "Fifa Laopakdee", "owgr": null, "odds": "+50000"},
-      {"name": "Mateo Pulcini", "owgr": null, "odds": "+50000"}
+      {
+        "name": "Max Greyserman",
+        "owgr": 59,
+        "odds": "+23000"
+      },
+      {
+        "name": "Dustin Johnson",
+        "owgr": 593,
+        "odds": "+24000"
+      },
+      {
+        "name": "Casey Jarvis",
+        "owgr": 70,
+        "odds": "+25000"
+      },
+      {
+        "name": "Carlos Ortiz",
+        "owgr": 161,
+        "odds": "+26000"
+      },
+      {
+        "name": "Haotong Li",
+        "owgr": 84,
+        "odds": "+28000"
+      },
+      {
+        "name": "Tom McKibbin",
+        "owgr": 105,
+        "odds": "+28000"
+      },
+      {
+        "name": "Nico Echavarria",
+        "owgr": 40,
+        "odds": "+31000"
+      },
+      {
+        "name": "Kristoffer Reitan",
+        "owgr": 46,
+        "odds": "+31000"
+      },
+      {
+        "name": "Rasmus Neergaard-Petersen",
+        "owgr": 69,
+        "odds": "+32500"
+      },
+      {
+        "name": "Johnny Keefer",
+        "owgr": 64,
+        "odds": "+34000"
+      },
+      {
+        "name": "Michael Kim",
+        "owgr": 43,
+        "odds": "+35000"
+      },
+      {
+        "name": "Andrew Novak",
+        "owgr": 48,
+        "odds": "+40000"
+      },
+      {
+        "name": "Aldrich Potgieter",
+        "owgr": 77,
+        "odds": "+41000"
+      },
+      {
+        "name": "Michael Brennan",
+        "owgr": 47,
+        "odds": "+43000"
+      },
+      {
+        "name": "Matt McCarty",
+        "owgr": 49,
+        "odds": "+50000"
+      },
+      {
+        "name": "Sami Valimaki",
+        "owgr": 56,
+        "odds": "+52500"
+      },
+      {
+        "name": "Davis Riley",
+        "owgr": 120,
+        "odds": "+60000"
+      },
+      {
+        "name": "Zach Johnson",
+        "owgr": 321,
+        "odds": "+60000"
+      },
+      {
+        "name": "Charl Schwartzel",
+        "owgr": 566,
+        "odds": "+60000"
+      },
+      {
+        "name": "Bubba Watson",
+        "owgr": 702,
+        "odds": "+60000"
+      },
+      {
+        "name": "Brian Campbell",
+        "owgr": 112,
+        "odds": "+250000"
+      },
+      {
+        "name": "Danny Willett",
+        "owgr": 400,
+        "odds": "+250000"
+      },
+      {
+        "name": "Ethan Fang",
+        "owgr": 4935,
+        "odds": "+250000"
+      },
+      {
+        "name": "Fifa Laopakdee",
+        "owgr": 4935,
+        "odds": "+400000"
+      },
+      {
+        "name": "Naoyuki Kataoka",
+        "owgr": 372,
+        "odds": "+450000"
+      },
+      {
+        "name": "Vijay Singh",
+        "owgr": 1418,
+        "odds": "+450000"
+      },
+      {
+        "name": "Angel Cabrera",
+        "owgr": 3092,
+        "odds": "+450000"
+      },
+      {
+        "name": "Mason Howell",
+        "owgr": 4935,
+        "odds": "+450000"
+      },
+      {
+        "name": "Jackson Herrington",
+        "owgr": null,
+        "odds": "+450000"
+      },
+      {
+        "name": "Mateo Pulcini",
+        "owgr": null,
+        "odds": "+450000"
+      },
+      {
+        "name": "Brandon Holtz",
+        "owgr": 787,
+        "odds": "+500000"
+      },
+      {
+        "name": "Jose Maria Olazabal",
+        "owgr": 3804,
+        "odds": "+500000"
+      },
+      {
+        "name": "Fred Couples",
+        "owgr": 4935,
+        "odds": "+500000"
+      },
+      {
+        "name": "Mike Weir",
+        "owgr": 4935,
+        "odds": "+500000"
+      }
     ]
   }
 }
