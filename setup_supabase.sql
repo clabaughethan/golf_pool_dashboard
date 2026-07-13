@@ -50,6 +50,10 @@ CREATE POLICY "Allow public read access on tournaments"
   ON tournaments FOR SELECT
   USING (true);
 
+CREATE POLICY "Allow public update on tournaments"
+  ON tournaments FOR UPDATE
+  USING (true);
+
 CREATE POLICY "Allow public read access on picks"
   ON picks FOR SELECT
   USING (true);
