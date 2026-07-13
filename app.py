@@ -286,6 +286,7 @@ elif page == "Make Picks":
 
     win_picks = []
     st.subheader("Win Picks")
+    st.info("Extra picks beyond the allowed count per group are ignored.")
     for group_num, count in rules["win_picks_per_group"].items():
         group_players = sorted(groups[group_num], key=sort_key)
         group_names = [p["name"] for p in group_players]
