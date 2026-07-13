@@ -176,6 +176,9 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
             if player_data is None or player_data["score"] in ("WD", "DQ"):
                 detail["points"] = WD_DQ_POINTS
                 detail["result"] = "WD/DQ"
+            elif not is_final and _rounds_completed(player_data) < 2 and captain_name in made_cut:
+                detail["points"] = 0
+                detail["result"] = "In progress"
             elif captain_name not in made_cut:
                 detail["points"] = MISSED_CUT_POINTS
                 detail["result"] = "Missed Cut"
