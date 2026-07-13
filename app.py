@@ -300,8 +300,6 @@ elif page == "Make Picks":
         if len(selected) > count:
             st.error(f"Too many picks for Group {group_num}. You can only pick {count}.")
             selected = selected[:count]
-            st.session_state[f"win_{group_num}"] = selected
-            st.rerun()
         elif len(selected) < count:
             st.warning(f"Select {count - len(selected)} more from Group {group_num}.")
         win_picks.extend(selected)
