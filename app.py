@@ -298,7 +298,8 @@ elif page == "Make Picks":
             format_func=lambda n: all_player_labels.get(n, n),
         )
         if len(selected) > count:
-            st.error(f"Too many picks for Group {group_num}. You can only pick {count}.")
+            st.error(f"Too many picks for Group {group_num}. You can only pick {count}. Using first {count}.")
+            selected = selected[:count]
         elif len(selected) < count:
             st.warning(f"Select {count - len(selected)} more from Group {group_num}.")
         win_picks.extend(selected)
