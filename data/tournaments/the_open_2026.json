@@ -1,0 +1,27 @@
+{
+  "id": "the-open-2026",
+  "name": "2026 The Open Championship",
+  "rules": {
+    "win_picks_per_group": {
+      "1": 2,
+      "2": 2,
+      "3": 2,
+      "4": 2,
+      "5": 2
+    },
+    "short_picks": 0,
+    "captain_pick": true,
+    "captain_pick_multiplier": 2,
+    "missed_cut_points": 75,
+    "wd_dq_points": 75,
+    "short_not_bottom_75_points": 75,
+    "cut_line": 60
+  },
+  "player_groups": {
+    "1": [],
+    "2": [],
+    "3": [],
+    "4": [],
+    "5": []
+  }
+}

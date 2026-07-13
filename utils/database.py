@@ -33,15 +33,18 @@ def verify_pool_code(tournament_id, code):
     return tournament.get("pool_code") == code
 
 
-def submit_picks(tournament_id, participant_name, win_picks, short_picks):
+def submit_picks(tournament_id, participant_name, win_picks, short_picks, captain_pick=None):
     """Submit or update picks for a participant."""
     sb = get_client()
-    sb.table("picks").upsert({
+    payload = {
         "tournament_id": tournament_id,
         "participant_name": participant_name,
         "win_picks": win_picks,
         "short_picks": short_picks,
-    }, on_conflict="tournament_id,participant_name").execute()
+    }
+    if captain_pick is not None:
+        payload["captain_pick"] = captain_pick
+    sb.table("picks").upsert(payload, on_conflict="tournament_id,participant_name").execute()
 
 
 def get_picks(tournament_id):

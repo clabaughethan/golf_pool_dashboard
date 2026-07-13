@@ -101,6 +101,8 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
     players = leaderboard["players"]
     is_final = leaderboard["completed"]
     cut_line = (rules or {}).get("cut_line", 60)
+    has_captain = (rules or {}).get("captain_pick", False)
+    captain_mul = (rules or {}).get("captain_pick_multiplier", 2)
 
     made_cut = _resolve_made_cut(players, cut_line)
     mc_from_last = _build_mc_from_last(players, made_cut)
@@ -109,6 +111,7 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
     for entry in picks_list:
         score = 0
         pick_details = []
+        captain_name = entry.get("captain_pick") if has_captain else None
 
         wp = entry["win_picks"]
         all_win = wp.values() if isinstance(wp, dict) else wp
@@ -116,7 +119,8 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
 
         for player_name in flat_win:
             player_data = players.get(player_name)
-            detail = {"name": player_name, "type": "win", "points": 0}
+            is_captain = player_name == captain_name
+            detail = {"name": player_name, "type": "win", "points": 0, "captain": is_captain}
 
             if player_data is None or player_data["score"] in ("WD", "DQ"):
                 detail["points"] = WD_DQ_POINTS
@@ -131,6 +135,10 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
                 pos = player_data["order"]
                 detail["points"] = pos
                 detail["result"] = f"T{pos}" if pos else str(pos)
+
+            if is_captain:
+                detail["points"] *= captain_mul
+                detail["captain_mul"] = captain_mul
 
             score += detail["points"]
             pick_details.append(detail)
@@ -157,6 +165,26 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
                     detail["points"] = MISSED_CUT_POINTS
                     detail["result"] = "Missed Cut"
 
+            score += detail["points"]
+            pick_details.append(detail)
+
+        # If captain pick is NOT in win_picks (stored separately), score it too
+        if captain_name and captain_name not in flat_win:
+            player_data = players.get(captain_name)
+            detail = {"name": captain_name, "type": "win", "points": 0, "captain": True, "captain_mul": captain_mul}
+
+            if player_data is None or player_data["score"] in ("WD", "DQ"):
+                detail["points"] = WD_DQ_POINTS
+                detail["result"] = "WD/DQ"
+            elif captain_name not in made_cut:
+                detail["points"] = MISSED_CUT_POINTS
+                detail["result"] = "Missed Cut"
+            else:
+                pos = player_data["order"]
+                detail["points"] = pos
+                detail["result"] = f"T{pos}" if pos else str(pos)
+
+            detail["points"] *= captain_mul
             score += detail["points"]
             pick_details.append(detail)
 

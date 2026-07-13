@@ -112,7 +112,15 @@ if page == "Home":
 
     st.markdown("---")
     st.subheader("How It Works")
-    st.markdown("**1. Make Your Picks** — Select 8 win picks and 2 short picks. Enter the pool code to submit.")
+    total_win = sum(config["rules"].get("win_picks_per_group", {}).values())
+    short_n = config["rules"].get("short_picks", 0)
+    captain_n = 1 if config["rules"].get("captain_pick") else 0
+    parts = [f"Select {total_win} win picks"]
+    if captain_n:
+        parts.append("1 Captain's Pick")
+    if short_n:
+        parts.append(f"{short_n} short picks")
+    st.markdown(f"**1. Make Your Picks** — {' + '.join(parts)}. Enter the pool code to submit.")
     st.markdown("**2. Tournament Starts** — Picks lock at the first tee time. No changes after that.")
     st.markdown("**3. Live Scoring** — Standings update automatically from ESPN every 2 minutes.")
 
@@ -148,9 +156,13 @@ elif page == "Rules":
     total_win = sum(win_groups.values())
     short_count = rules.get("short_picks", 0)
 
+    has_captain = rules.get("captain_pick", False)
+
     rows = []
     for g, count in win_groups.items():
         rows.append(f"| Players to **WIN** | {count} from Group {g} |")
+    if has_captain:
+        rows.append(f"| **Captain's Pick** | 1 | Any group (extra pick, points doubled) |")
     if short_count:
         rows.append(f"| Players to **SHORT** (lose) | {short_count} | Full field (any group) |")
     st.markdown("\n".join([
@@ -161,6 +173,10 @@ elif page == "Rules":
     st.subheader("Scoring (Least Points Wins)")
     scoring_rows = []
     scoring_rows.append("| **Win pick** finishes in position X | X points (1st = 1 pt, 27th = 27 pts, etc.) |")
+    if has_captain:
+        multiplier = rules.get("captain_pick_multiplier", 2)
+        scoring_rows.append(f"| **Captain's Pick** finishes in position X | **{multiplier}x** points (X × {multiplier}) |")
+        scoring_rows.append(f"| **Captain's Pick** misses the cut | {multiplier} × 75 = {multiplier * 75} points |")
     scoring_rows.append("| **Win pick** misses the cut | 75 points |")
     if short_count:
         scoring_rows.append("| **Short pick** finishes X from last | X points (last = 1 pt, 30th-to-last = 30 pts, etc.) |")
@@ -172,6 +188,8 @@ elif page == "Rules":
     ] + scoring_rows))
 
     st.subheader("Key Notes")
+    if has_captain:
+        st.markdown("- Your **Captain's Pick** is an **extra** player (not one of your 10 group picks) whose points are **doubled**.")
     if short_count:
         st.markdown("- Short picks are **not** group-restricted — you can short anyone in the field.")
     st.markdown("- Picks are locked once the tournament begins.")
@@ -244,6 +262,7 @@ elif page == "Make Picks":
     existing = existing_data[0] if existing_data else None
     existing_win = existing["win_picks"] if existing else []
     existing_short = existing["short_picks"] if existing else []
+    existing_captain = existing["captain_pick"] if existing else None
 
     rules = config["rules"]
     groups = config["player_groups"]
@@ -284,38 +303,68 @@ elif page == "Make Picks":
             st.warning(f"Select {count - len(selected)} more from Group {group_num}.")
         win_picks.extend(selected)
 
-    short_defaults = [p for p in existing_short if p in all_player_names]
-    short_picks = st.multiselect(
-        f"Short Picks — Pick {rules['short_picks']} to LOSE",
-        all_player_names,
-        default=short_defaults,
-        key="short",
-        format_func=lambda n: all_player_labels.get(n, n),
-    )
-    if len(short_picks) > rules["short_picks"]:
-        st.error(f"Too many short picks. You can only pick {rules['short_picks']}.")
-    elif len(short_picks) < rules["short_picks"]:
-        st.warning(f"Select {rules['short_picks'] - len(short_picks)} more.")
+    captain_pick = None
+    has_captain = rules.get("captain_pick", False)
+    if has_captain:
+        st.subheader("Captain's Pick")
+        eligible = [n for n in all_player_names if n not in win_picks]
+        captain_default = existing_captain if existing_captain in eligible else None
+        captain_pick = st.selectbox(
+            "Pick 1 extra player as your CAPTAIN (points doubled!)",
+            [""] + eligible,
+            index=([""] + eligible).index(captain_default) if captain_default else 0,
+            key="captain",
+            format_func=lambda n: all_player_labels.get(n, n) if n else "",
+        )
+        if not captain_pick:
+            st.warning("Select your Captain's Pick.")
+        else:
+            st.success(f"Captain: **{captain_pick}** — all points doubled!")
 
-    expected = sum(rules["win_picks_per_group"].values()) + rules["short_picks"]
-    current = len(win_picks) + len(short_picks)
+    short_count = rules["short_picks"]
+    short_picks = []
+    if short_count > 0:
+        short_defaults = [p for p in existing_short if p in all_player_names]
+        short_picks = st.multiselect(
+            f"Short Picks — Pick {short_count} to LOSE",
+            all_player_names,
+            default=short_defaults,
+            key="short",
+            format_func=lambda n: all_player_labels.get(n, n),
+        )
+        if len(short_picks) > short_count:
+            st.error(f"Too many short picks. You can only pick {short_count}.")
+        elif len(short_picks) < short_count:
+            st.warning(f"Select {short_count - len(short_picks)} more.")
+
+    expected = sum(rules["win_picks_per_group"].values()) + short_count
+    captain_extra = 1 if has_captain else 0
+    total_expected = expected + captain_extra
+    current = len(win_picks) + len(short_picks) + (1 if captain_pick else 0)
 
     st.divider()
-    if current == expected and len(set(win_picks)) == len(win_picks) and len(set(short_picks)) == len(short_picks):
-        if not set(win_picks) & set(short_picks):
-            if st.button("Submit Picks", type="primary"):
-                sb.table("picks").upsert({
-                    "tournament_id": tournament_id,
-                    "participant_name": participant_name,
-                    "win_picks": win_picks,
-                    "short_picks": short_picks,
-                }, on_conflict="tournament_id,participant_name").execute()
-                st.success("Picks submitted successfully!")
-                st.balloons()
-        else:
-            st.error("A player cannot be both a win pick and a short pick.")
+    all_good = current == total_expected and len(set(win_picks)) == len(win_picks)
+    if short_count > 0 and set(win_picks) & set(short_picks):
+        all_good = False
+        st.error("A player cannot be both a win pick and a short pick.")
+    if has_captain and not captain_pick:
+        all_good = False
+
+    if all_good:
+        if st.button("Submit Picks", type="primary"):
+            payload = {
+                "tournament_id": tournament_id,
+                "participant_name": participant_name,
+                "win_picks": win_picks,
+                "short_picks": short_picks,
+            }
+            if has_captain:
+                payload["captain_pick"] = captain_pick
+            sb.table("picks").upsert(payload, on_conflict="tournament_id,participant_name").execute()
+            st.success("Picks submitted successfully!")
+            st.balloons()
     else:
-        st.info(f"Complete all {expected} picks to submit.")
+        st.info(f"Complete all {total_expected} picks to submit.")
 
 elif page == "Leaderboard":
     tournament_id = selected_id
@@ -437,7 +486,10 @@ elif page == "Leaderboard":
                 st.markdown("**Win Picks**")
                 for pick in r["picks"]:
                     if pick["type"] == "win":
-                        st.markdown(f"- {pick['name']}: **{pick['result']}** ({pick['points']} pts)")
+                        label = f"- {pick['name']}: **{pick['result']}** ({pick['points']} pts)"
+                        if pick.get("captain"):
+                            label += " 👑"
+                        st.markdown(label)
             with cols[1]:
                 st.markdown("**Short Picks**")
                 for pick in r["picks"]:
