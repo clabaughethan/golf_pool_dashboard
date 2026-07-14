@@ -493,25 +493,37 @@ elif page == "Leaderboard":
         st.info("No picks submitted yet.")
         st.stop()
 
+    start_time_str = start_times.get(selected_id, "")
+    started = False
+    if start_time_str:
+        try:
+            t = datetime.fromisoformat(start_time_str.replace("Z", "+00:00"))
+            started = datetime.now(timezone.utc) >= t
+        except Exception:
+            started = True
+    else:
+        started = True
+
     results = calculate_pool_scores(picks_list, leaderboard, config["rules"])
     st.subheader("Pool Standings")
 
-    for r in results:
-        with st.expander(f"**#{r['rank']} {r['participant_name']}** — {r['score']} pts", expanded=False):
-            cols = st.columns(2)
-            with cols[0]:
-                st.markdown("**Win Picks**")
-                for pick in r["picks"]:
-                    if pick["type"] == "win":
-                        label = f"- {pick['name']}: **{pick['result']}** ({pick['points']} pts)"
-                        if pick.get("captain"):
-                            label += " 👑"
-                        st.markdown(label)
-            with cols[1]:
-                st.markdown("**Short Picks**")
-                for pick in r["picks"]:
-                    if pick["type"] == "short":
-                        st.markdown(f"- {pick['name']}: **{pick['result']}** ({pick['points']} pts)")
+    if started:
+        for r in results:
+            with st.expander(f"**#{r['rank']} {r['participant_name']}** — {r['score']} pts", expanded=False):
+                cols = st.columns(2)
+                with cols[0]:
+                    st.markdown("**Win Picks**")
+                    for pick in r["picks"]:
+                        if pick["type"] == "win":
+                            label = f"- {pick['name']}: **{pick['result']}** ({pick['points']} pts)"
+                            if pick.get("captain"):
+                                label += " 👑"
+                            st.markdown(label)
+                with cols[1]:
+                    st.markdown("**Short Picks**")
+                    for pick in r["picks"]:
+                        if pick["type"] == "short":
+                            st.markdown(f"- {pick['name']}: **{pick['result']}** ({pick['points']} pts)")
 
     st.divider()
     st.subheader("ESPN Leaderboard")
