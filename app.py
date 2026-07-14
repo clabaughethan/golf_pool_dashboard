@@ -202,26 +202,21 @@ elif page == "Groups":
     rules = config["rules"]
     groups = config["player_groups"]
 
-    st.markdown(f"**{sum(len(g) for g in groups.values())} players across {len(groups)} groups**")
+    total = sum(len(g) for g in groups.values())
+    st.markdown(f"**{total} players across {len(groups)} groups**")
     st.divider()
 
-    cols = st.columns(len(groups))
-    for i, (group_num, players) in enumerate(sorted(groups.items(), key=lambda x: int(x[0]))):
+    sorted_groups = sorted(groups.items(), key=lambda x: int(x[0]))
+    cols = st.columns(len(sorted_groups))
+    for i, (group_num, players) in enumerate(sorted_groups):
         count = rules["win_picks_per_group"].get(str(group_num), 2)
         with cols[i]:
             st.subheader(f"Group {group_num}")
             st.caption(f"{len(players)} players — Pick {count}")
-            st.markdown("---")
-            header = st.columns([3, 1, 1])
-            header[0].markdown("**Player**")
-            header[1].markdown("**OWGR**")
-            header[2].markdown("**Odds**")
             for p in players:
-                owgr = str(p.get("owgr")) if p.get("owgr") else "N/A"
-                row = st.columns([3, 1, 1])
-                row[0].markdown(p["name"])
-                row[1].markdown(f"`{owgr}`")
-                row[2].markdown(f"`{p['odds']}`")
+                owgr = p.get("owgr", "N/A")
+                odds = p.get("odds", "N/A")
+                st.markdown(f"**{p['name']}**  \nOWGR: {owgr} • {odds}")
 
 elif page == "Make Picks":
     tournament_id = selected_id
