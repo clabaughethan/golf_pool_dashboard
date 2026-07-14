@@ -215,6 +215,8 @@ elif page == "Groups":
                 "OWGR": p.get("owgr", "N/A"),
                 "Odds": p.get("odds", "N/A"),
             })
+        if int(group_num) < max(int(g) for g in groups.keys()):
+            rows.append({"Group": "", "Player": "", "OWGR": "", "Odds": ""})
     st.dataframe(rows, use_container_width=True, hide_index=True)
 
 elif page == "Make Picks":
