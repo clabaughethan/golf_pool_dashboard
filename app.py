@@ -206,17 +206,16 @@ elif page == "Groups":
     st.markdown(f"**{total} players across {len(groups)} groups**")
     st.divider()
 
-    sorted_groups = sorted(groups.items(), key=lambda x: int(x[0]))
-    cols = st.columns(len(sorted_groups))
-    for i, (group_num, players) in enumerate(sorted_groups):
-        count = rules["win_picks_per_group"].get(str(group_num), 2)
-        with cols[i]:
-            st.subheader(f"Group {group_num}")
-            st.caption(f"{len(players)} players — Pick {count}")
-            for p in players:
-                owgr = p.get("owgr", "N/A")
-                odds = p.get("odds", "N/A")
-                st.markdown(f"**{p['name']}**  \nOWGR: {owgr} • {odds}")
+    rows = []
+    for group_num in sorted(groups.keys(), key=lambda x: int(x)):
+        for p in groups[group_num]:
+            rows.append({
+                "Group": int(group_num),
+                "Player": p["name"],
+                "OWGR": p.get("owgr", "N/A"),
+                "Odds": p.get("odds", "N/A"),
+            })
+    st.dataframe(rows, use_container_width=True, hide_index=True)
 
 elif page == "Make Picks":
     tournament_id = selected_id
