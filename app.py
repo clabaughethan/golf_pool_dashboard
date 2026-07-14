@@ -62,7 +62,7 @@ if st.sidebar.button("🏠 Home", key="nav_Home", use_container_width=True, disa
     st.session_state.page = "Home"
     st.rerun()
 
-nav_items = [("📋 Rules", "Rules"), ("🏌️ Make Picks", "Make Picks"), ("🏆 Leaderboard", "Leaderboard")]
+nav_items = [("📋 Rules", "Rules"), ("👥 Player Groups", "Groups"), ("🏌️ Make Picks", "Make Picks"), ("🏆 Leaderboard", "Leaderboard")]
 for label, key in nav_items:
     active = (st.session_state.get("page", "Home") == key)
     if st.sidebar.button(label, key=f"nav_{key}", use_container_width=True, disabled=active):
@@ -195,13 +195,33 @@ elif page == "Rules":
     st.markdown("- Picks are locked once the tournament begins.")
     st.markdown("- Submit your picks on the **Make Picks** page using your pool code.")
 
+elif page == "Groups":
+    st.title("👥 Player Groups")
+    st.header(config["name"])
     st.divider()
-    st.subheader("Player Groups")
-    for group_num, players in groups.items():
-        with st.expander(f"Group {group_num} ({len(players)} players)"):
+    rules = config["rules"]
+    groups = config["player_groups"]
+
+    st.markdown(f"**{sum(len(g) for g in groups.values())} players across {len(groups)} groups**")
+    st.divider()
+
+    cols = st.columns(len(groups))
+    for i, (group_num, players) in enumerate(sorted(groups.items(), key=lambda x: int(x[0]))):
+        count = rules["win_picks_per_group"].get(str(group_num), 2)
+        with cols[i]:
+            st.subheader(f"Group {group_num}")
+            st.caption(f"{len(players)} players — Pick {count}")
+            st.markdown("---")
+            header = st.columns([3, 1, 1])
+            header[0].markdown("**Player**")
+            header[1].markdown("**OWGR**")
+            header[2].markdown("**Odds**")
             for p in players:
                 owgr = str(p.get("owgr")) if p.get("owgr") else "N/A"
-                st.text(f"  {p['name']:30s}  OWGR: {owgr:>6s}  Odds: {p['odds']}")
+                row = st.columns([3, 1, 1])
+                row[0].markdown(p["name"])
+                row[1].markdown(f"`{owgr}`")
+                row[2].markdown(f"`{p['odds']}`")
 
 elif page == "Make Picks":
     tournament_id = selected_id
