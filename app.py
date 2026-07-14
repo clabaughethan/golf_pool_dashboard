@@ -1,5 +1,6 @@
 import json
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 import streamlit as st
 import requests
 import pandas as pd
@@ -391,6 +392,23 @@ elif page == "Leaderboard":
 
     sb = get_sb()
 
+    start_time_str = start_times.get(selected_id, "")
+    started = False
+    if start_time_str:
+        try:
+            t = datetime.fromisoformat(start_time_str.replace("Z", "+00:00"))
+            started = datetime.now(timezone.utc) >= t
+        except Exception:
+            started = True
+    else:
+        started = True
+
+    if not started:
+        t_display = t.astimezone(ZoneInfo("America/New_York")).strftime("%A, %B %d at %I:%M %p %Z")
+        st.subheader(f"{config['name']} — Starts {t_display}")
+        st.info("Picks are hidden until the tournament starts.")
+        st.stop()
+
     snapshot = sb.table("leaderboard_snapshots").select("*").eq("tournament_id", tournament_id).execute().data
     is_snapshot = bool(snapshot)
     if snapshot:
@@ -493,37 +511,25 @@ elif page == "Leaderboard":
         st.info("No picks submitted yet.")
         st.stop()
 
-    start_time_str = start_times.get(selected_id, "")
-    started = False
-    if start_time_str:
-        try:
-            t = datetime.fromisoformat(start_time_str.replace("Z", "+00:00"))
-            started = datetime.now(timezone.utc) >= t
-        except Exception:
-            started = True
-    else:
-        started = True
-
     results = calculate_pool_scores(picks_list, leaderboard, config["rules"])
     st.subheader("Pool Standings")
 
-    if started:
-        for r in results:
-            with st.expander(f"**#{r['rank']} {r['participant_name']}** — {r['score']} pts", expanded=False):
-                cols = st.columns(2)
-                with cols[0]:
-                    st.markdown("**Win Picks**")
-                    for pick in r["picks"]:
-                        if pick["type"] == "win":
-                            label = f"- {pick['name']}: **{pick['result']}** ({pick['points']} pts)"
-                            if pick.get("captain"):
-                                label += " 👑"
-                            st.markdown(label)
-                with cols[1]:
-                    st.markdown("**Short Picks**")
-                    for pick in r["picks"]:
-                        if pick["type"] == "short":
-                            st.markdown(f"- {pick['name']}: **{pick['result']}** ({pick['points']} pts)")
+    for r in results:
+        with st.expander(f"**#{r['rank']} {r['participant_name']}** — {r['score']} pts", expanded=False):
+            cols = st.columns(2)
+            with cols[0]:
+                st.markdown("**Win Picks**")
+                for pick in r["picks"]:
+                    if pick["type"] == "win":
+                        label = f"- {pick['name']}: **{pick['result']}** ({pick['points']} pts)"
+                        if pick.get("captain"):
+                            label += " 👑"
+                        st.markdown(label)
+            with cols[1]:
+                st.markdown("**Short Picks**")
+                for pick in r["picks"]:
+                    if pick["type"] == "short":
+                        st.markdown(f"- {pick['name']}: **{pick['result']}** ({pick['points']} pts)")
 
     st.divider()
     st.subheader("ESPN Leaderboard")
