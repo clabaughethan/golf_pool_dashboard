@@ -542,7 +542,7 @@ elif page == "Leaderboard":
         default=cur_round,
     )
 
-    positions = {}
+    ranks = {}
     i = 0
     while i < len(sorted_items):
         score = sorted_items[i][1]["score"]
@@ -551,15 +551,16 @@ elif page == "Leaderboard":
             j += 1
         tied = j - i > 1
         for k in range(i, j):
-            positions[k] = f"T{i + 1}" if tied else str(i + 1)
+            ranks[k] = f"T{i + 1}" if tied else str(i + 1)
         i = j
 
     rounds_to_show = [rn for rn in range(1, max_round + 1) if rn != cur_round]
+    cut_exists = len(made_cut) > 0
 
     rows = []
     for idx, (name, d) in enumerate(sorted_items):
-        pos = positions[idx]
-        if name not in made_cut:
+        pos = ranks[idx]
+        if cut_exists and name not in made_cut:
             pos = f"{pos} MC"
         row = {"Pos": pos, "Player": name, "To Par": d["score"]}
         round_map = {r["number"]: r for r in d.get("rounds", [])}
