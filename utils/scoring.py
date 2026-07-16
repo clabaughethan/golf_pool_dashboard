@@ -154,8 +154,13 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
                 detail["result"] = "WD/DQ"
             elif not is_final and not cut_determined:
                 pos = positions.get(player_name, mc_points)
-                detail["points"] = pos
-                detail["result"] = f"T{pos}" if pos else str(pos)
+                if pos > cut_line:
+                    pos = mc_points
+                    detail["points"] = pos
+                    detail["result"] = "Missed Cut"
+                else:
+                    detail["points"] = pos
+                    detail["result"] = f"T{pos}" if pos else str(pos)
             elif player_name not in made_cut:
                 detail["points"] = mc_points
                 detail["result"] = "Missed Cut"
@@ -206,8 +211,13 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
                 detail["result"] = "WD/DQ"
             elif not is_final and not cut_determined:
                 pos = positions.get(captain_name, mc_points)
-                detail["points"] = pos
-                detail["result"] = f"T{pos}" if pos else str(pos)
+                if pos > cut_line:
+                    pos = mc_points
+                    detail["points"] = pos
+                    detail["result"] = "Missed Cut"
+                else:
+                    detail["points"] = pos
+                    detail["result"] = f"T{pos}" if pos else str(pos)
             elif captain_name not in made_cut:
                 detail["points"] = mc_points
                 detail["result"] = "Missed Cut"
