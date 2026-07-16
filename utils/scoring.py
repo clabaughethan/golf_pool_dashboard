@@ -106,6 +106,32 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
     mc_from_last = _build_mc_from_last(players, made_cut)
     mc_points = max(75, len(made_cut) + 1)
 
+    def _score_key(score):
+        if score in ("WD", "DQ", None, ""):
+            return 9999
+        if score == "E":
+            return 0
+        try:
+            return int(score)
+        except (ValueError, TypeError):
+            return 9999
+
+    scored_players = {
+        n: d for n, d in players.items()
+        if d.get("score") not in ("WD", "DQ", None, "")
+    }
+    sorted_by_score = sorted(scored_players.items(), key=lambda x: (_score_key(x[1].get("score", "")), int(x[1].get("order", 9999))))
+    positions = {}
+    i = 0
+    while i < len(sorted_by_score):
+        score = _score_key(sorted_by_score[i][1].get("score", ""))
+        j = i
+        while j < len(sorted_by_score) and _score_key(sorted_by_score[j][1].get("score", "")) == score:
+            j += 1
+        for k in range(i, j):
+            positions[sorted_by_score[k][0]] = i + 1
+        i = j
+
     results = []
     for entry in picks_list:
         score = 0
@@ -127,14 +153,14 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
                 detail["points"] = mc_points
                 detail["result"] = "WD/DQ"
             elif not is_final and not cut_determined:
-                pos = player_data.get("order", mc_points)
+                pos = positions.get(player_name, mc_points)
                 detail["points"] = pos
                 detail["result"] = f"T{pos}" if pos else str(pos)
             elif player_name not in made_cut:
                 detail["points"] = mc_points
                 detail["result"] = "Missed Cut"
             else:
-                pos = player_data["order"]
+                pos = positions.get(player_name, mc_points)
                 detail["points"] = pos
                 detail["result"] = f"T{pos}" if pos else str(pos)
 
@@ -179,14 +205,14 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
                 detail["points"] = mc_points
                 detail["result"] = "WD/DQ"
             elif not is_final and not cut_determined:
-                pos = player_data.get("order", mc_points)
+                pos = positions.get(captain_name, mc_points)
                 detail["points"] = pos
                 detail["result"] = f"T{pos}" if pos else str(pos)
             elif captain_name not in made_cut:
                 detail["points"] = mc_points
                 detail["result"] = "Missed Cut"
             else:
-                pos = player_data["order"]
+                pos = positions.get(captain_name, mc_points)
                 detail["points"] = pos
                 detail["result"] = f"T{pos}" if pos else str(pos)
 
