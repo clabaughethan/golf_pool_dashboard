@@ -807,6 +807,6 @@
     "captain_pick_multiplier": 2,
     "missed_cut_points": 75,
     "wd_dq_points": 75,
-    "cut_line": 60
+    "cut_line": 70
   }
 }

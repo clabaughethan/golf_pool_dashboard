@@ -1,5 +1,3 @@
-MISSED_CUT_POINTS = 75
-WD_DQ_POINTS = 75
 SHORT_NOT_BOTTOM_75_POINTS = 75
 
 
@@ -106,6 +104,7 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
 
     made_cut = _resolve_made_cut(players, cut_line)
     mc_from_last = _build_mc_from_last(players, made_cut)
+    mc_points = max(75, len(made_cut) + 1)
 
     results = []
     for entry in picks_list:
@@ -117,19 +116,22 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
         all_win = wp.values() if isinstance(wp, dict) else wp
         flat_win = [p for group in all_win for p in (group if isinstance(group, list) else [group])]
 
+        cut_determined = len(made_cut) > 0
+
         for player_name in flat_win:
             player_data = players.get(player_name)
             is_captain = player_name == captain_name
             detail = {"name": player_name, "type": "win", "points": 0, "captain": is_captain}
 
             if player_data is None or player_data["score"] in ("WD", "DQ"):
-                detail["points"] = WD_DQ_POINTS
+                detail["points"] = mc_points
                 detail["result"] = "WD/DQ"
-            elif not is_final and _rounds_completed(player_data) < 2 and player_name in made_cut:
-                detail["points"] = 0
-                detail["result"] = "In progress"
+            elif not is_final and not cut_determined:
+                pos = player_data.get("order", mc_points)
+                detail["points"] = pos
+                detail["result"] = f"T{pos}" if pos else str(pos)
             elif player_name not in made_cut:
-                detail["points"] = MISSED_CUT_POINTS
+                detail["points"] = mc_points
                 detail["result"] = "Missed Cut"
             else:
                 pos = player_data["order"]
@@ -148,7 +150,7 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
             detail = {"name": player_name, "type": "short", "points": 0}
 
             if player_data is None or player_data["score"] in ("WD", "DQ"):
-                detail["points"] = WD_DQ_POINTS
+                detail["points"] = mc_points
                 detail["result"] = "WD/DQ"
             elif player_name in made_cut:
                 detail["points"] = SHORT_NOT_BOTTOM_75_POINTS
@@ -162,7 +164,7 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
                     detail["points"] = fl
                     detail["result"] = f"#{fl} from last"
                 else:
-                    detail["points"] = MISSED_CUT_POINTS
+                    detail["points"] = mc_points
                     detail["result"] = "Missed Cut"
 
             score += detail["points"]
@@ -174,13 +176,14 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
             detail = {"name": captain_name, "type": "win", "points": 0, "captain": True, "captain_mul": captain_mul}
 
             if player_data is None or player_data["score"] in ("WD", "DQ"):
-                detail["points"] = WD_DQ_POINTS
+                detail["points"] = mc_points
                 detail["result"] = "WD/DQ"
-            elif not is_final and _rounds_completed(player_data) < 2 and captain_name in made_cut:
-                detail["points"] = 0
-                detail["result"] = "In progress"
+            elif not is_final and not cut_determined:
+                pos = player_data.get("order", mc_points)
+                detail["points"] = pos
+                detail["result"] = f"T{pos}" if pos else str(pos)
             elif captain_name not in made_cut:
-                detail["points"] = MISSED_CUT_POINTS
+                detail["points"] = mc_points
                 detail["result"] = "Missed Cut"
             else:
                 pos = player_data["order"]
