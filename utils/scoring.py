@@ -101,6 +101,7 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
     cut_line = (rules or {}).get("cut_line", 60)
     has_captain = (rules or {}).get("captain_pick", False)
     captain_mul = (rules or {}).get("captain_pick_multiplier", 2)
+    has_short = (rules or {}).get("short_picks", 0) > 0
 
     made_cut = _resolve_made_cut(players, cut_line)
     mc_from_last = _build_mc_from_last(players, made_cut)
@@ -176,30 +177,31 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
             score += detail["points"]
             pick_details.append(detail)
 
-        for player_name in entry["short_picks"]:
-            player_data = players.get(player_name)
-            detail = {"name": player_name, "type": "short", "points": 0}
+        if has_short:
+            for player_name in entry["short_picks"]:
+                player_data = players.get(player_name)
+                detail = {"name": player_name, "type": "short", "points": 0}
 
-            if player_data is None or player_data["score"] in ("WD", "DQ"):
-                detail["points"] = mc_points
-                detail["result"] = "WD/DQ"
-            elif player_name in made_cut:
-                detail["points"] = SHORT_NOT_BOTTOM_75_POINTS
-                detail["result"] = "Made Cut"
-            elif not is_final and _not_in_bottom_75_after_day2(player_data, total_players):
-                detail["points"] = SHORT_NOT_BOTTOM_75_POINTS
-                detail["result"] = "Not in bottom 75"
-            else:
-                fl = mc_from_last.get(player_name)
-                if fl:
-                    detail["points"] = fl
-                    detail["result"] = f"#{fl} from last"
-                else:
+                if player_data is None or player_data["score"] in ("WD", "DQ"):
                     detail["points"] = mc_points
-                    detail["result"] = "Missed Cut"
+                    detail["result"] = "WD/DQ"
+                elif player_name in made_cut:
+                    detail["points"] = SHORT_NOT_BOTTOM_75_POINTS
+                    detail["result"] = "Made Cut"
+                elif not is_final and _not_in_bottom_75_after_day2(player_data, total_players):
+                    detail["points"] = SHORT_NOT_BOTTOM_75_POINTS
+                    detail["result"] = "Not in bottom 75"
+                else:
+                    fl = mc_from_last.get(player_name)
+                    if fl:
+                        detail["points"] = fl
+                        detail["result"] = f"#{fl} from last"
+                    else:
+                        detail["points"] = mc_points
+                        detail["result"] = "Missed Cut"
 
-            score += detail["points"]
-            pick_details.append(detail)
+                score += detail["points"]
+                pick_details.append(detail)
 
         # If captain pick is NOT in win_picks (stored separately), score it too
         if captain_name and captain_name not in flat_win:

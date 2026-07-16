@@ -337,7 +337,7 @@ elif page == "Make Picks":
         else:
             st.success(f"Captain: **{captain_pick}** — all points doubled!")
 
-    short_count = rules["short_picks"]
+    short_count = rules.get("short_picks", 0)
     short_picks = []
     if short_count > 0:
         short_defaults = [p for p in existing_short if p in all_player_names]
@@ -524,10 +524,11 @@ elif page == "Leaderboard":
                             label += " 👑"
                         st.markdown(label)
             with cols[1]:
-                st.markdown("**Short Picks**")
-                for pick in r["picks"]:
-                    if pick["type"] == "short":
-                        st.markdown(f"- {pick['name']}: **{pick['result']}** ({pick['points']} pts)")
+                if config["rules"].get("short_picks", 0) > 0:
+                    st.markdown("**Short Picks**")
+                    for pick in r["picks"]:
+                        if pick["type"] == "short":
+                            st.markdown(f"- {pick['name']}: **{pick['result']}** ({pick['points']} pts)")
 
     st.divider()
     st.subheader("ESPN Leaderboard")
