@@ -158,7 +158,8 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
                 if pos > cut_line:
                     pos = mc_points
                     detail["points"] = pos
-                    detail["result"] = "Missed Cut"
+                    score_label = player_data.get("score", "") if player_data else ""
+                    detail["result"] = score_label if score_label else "WD"
                 else:
                     detail["points"] = pos
                     detail["result"] = f"T{pos}" if pos else str(pos)
@@ -216,7 +217,8 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
                 if pos > cut_line:
                     pos = mc_points
                     detail["points"] = pos
-                    detail["result"] = "Missed Cut"
+                    score_label = player_data.get("score", "") if player_data else ""
+                    detail["result"] = score_label if score_label else "WD"
                 else:
                     detail["points"] = pos
                     detail["result"] = f"T{pos}" if pos else str(pos)
