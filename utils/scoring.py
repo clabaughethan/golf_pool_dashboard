@@ -105,8 +105,6 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
     made_cut = _resolve_made_cut(players, cut_line)
     mc_from_last = _build_mc_from_last(players, made_cut)
     mc_points = max(75, len(made_cut) + 1)
-    import streamlit as st
-    st.warning(f"DEBUG: made_cut={len(made_cut)}, mc_points={mc_points}, cut_line={cut_line}, is_final={is_final}, total_players={total_players}")
 
     results = []
     for entry in picks_list:
@@ -195,11 +193,6 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
             detail["points"] *= captain_mul
             score += detail["points"]
             pick_details.append(detail)
-
-        if len(results) == 0:
-            st.warning(f"DEBUG first entry: {entry['participant_name']}, score={score}, cut_determined={cut_determined}")
-            for d in pick_details[:3]:
-                st.warning(f"  {d['name']}: pts={d['points']} result={d['result']}")
 
         results.append({
             "participant_name": entry["participant_name"],

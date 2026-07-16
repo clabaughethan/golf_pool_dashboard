@@ -59,14 +59,14 @@ st.session_state.selected_tournament_config = configs[selected_id]
 st.sidebar.divider()
 
 active_home = (st.session_state.get("page", "Home") == "Home")
-if st.sidebar.button("🏠 Home", key="nav_Home", use_container_width=True, disabled=active_home):
+if st.sidebar.button("🏠 Home", key="nav_Home", width='stretch', disabled=active_home):
     st.session_state.page = "Home"
     st.rerun()
 
 nav_items = [("📋 Rules", "Rules"), ("👥 Player Groups", "Groups"), ("🏌️ Make Picks", "Make Picks"), ("🏆 Leaderboard", "Leaderboard")]
 for label, key in nav_items:
     active = (st.session_state.get("page", "Home") == key)
-    if st.sidebar.button(label, key=f"nav_{key}", use_container_width=True, disabled=active):
+    if st.sidebar.button(label, key=f"nav_{key}", width='stretch', disabled=active):
         st.session_state.page = key
         st.rerun()
 
@@ -129,15 +129,15 @@ if page == "Home":
     st.subheader("Quick Links")
     col1, col2, col3 = st.columns(3)
     with col1:
-        if st.button("📋 View Rules", use_container_width=True):
+        if st.button("📋 View Rules", width='stretch'):
             st.session_state.page = "Rules"
             st.rerun()
     with col2:
-        if st.button("🏌️ Make Picks", use_container_width=True):
+        if st.button("🏌️ Make Picks", width='stretch'):
             st.session_state.page = "Make Picks"
             st.rerun()
     with col3:
-        if st.button("🏆 Leaderboard", use_container_width=True):
+        if st.button("🏆 Leaderboard", width='stretch'):
             st.session_state.page = "Leaderboard"
             st.rerun()
 
@@ -211,14 +211,12 @@ elif page == "Groups":
     for group_num in sorted(groups.keys(), key=lambda x: int(x)):
         for p in groups[group_num]:
             rows.append({
-                "Group": int(group_num),
+                "Group": group_num,
                 "Player": p["name"],
                 "OWGR": p.get("owgr", "N/A"),
                 "Odds": p.get("odds", "N/A"),
             })
-        if int(group_num) < max(int(g) for g in groups.keys()):
-            rows.append({"Group": "", "Player": "", "OWGR": "", "Odds": ""})
-    st.dataframe(rows, use_container_width=True, hide_index=True)
+    st.dataframe(rows, width='stretch', hide_index=True)
 
 elif page == "Make Picks":
     tournament_id = selected_id
@@ -586,4 +584,4 @@ elif page == "Leaderboard":
         rows.append(row)
 
     df = pd.DataFrame(rows)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(df, width='stretch', hide_index=True)
