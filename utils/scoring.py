@@ -123,14 +123,18 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
     }
     sorted_by_score = sorted(scored_players.items(), key=lambda x: (_score_key(x[1].get("score", "")), int(x[1].get("order", 9999))))
     positions = {}
+    tied_positions = set()
     i = 0
     while i < len(sorted_by_score):
         score = _score_key(sorted_by_score[i][1].get("score", ""))
         j = i
         while j < len(sorted_by_score) and _score_key(sorted_by_score[j][1].get("score", "")) == score:
             j += 1
+        is_tied = (j - i) > 1
         for k in range(i, j):
             positions[sorted_by_score[k][0]] = i + 1
+        if is_tied:
+            tied_positions.add(i + 1)
         i = j
 
     results = []
@@ -156,7 +160,8 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
             elif not is_final and not cut_determined:
                 pos = positions.get(player_name, mc_points)
                 score_label = player_data.get("score", "") if player_data else ""
-                display = f"T{pos} ({score_label})" if score_label else (f"T{pos}" if pos else str(pos))
+                prefix = "T" if pos in tied_positions else ""
+                display = f"{prefix}{pos} ({score_label})" if score_label else f"{prefix}{pos}" if pos else str(pos)
                 if pos > cut_line:
                     detail["points"] = mc_points
                 else:
@@ -214,7 +219,8 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
             elif not is_final and not cut_determined:
                 pos = positions.get(captain_name, mc_points)
                 score_label = player_data.get("score", "") if player_data else ""
-                display = f"T{pos} ({score_label})" if score_label else (f"T{pos}" if pos else str(pos))
+                prefix = "T" if pos in tied_positions else ""
+                display = f"{prefix}{pos} ({score_label})" if score_label else f"{prefix}{pos}" if pos else str(pos)
                 if pos > cut_line:
                     detail["points"] = mc_points
                 else:
