@@ -167,7 +167,7 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
         all_win = wp.values() if isinstance(wp, dict) else wp
         flat_win = [p for group in all_win for p in (group if isinstance(group, list) else [group])]
 
-        cut_determined = len(made_cut) > 0
+        cut_determined = leaderboard.get("round", 1) > 2 and len(made_cut) > 0
 
         for player_name in flat_win:
             player_data = players.get(player_name)
