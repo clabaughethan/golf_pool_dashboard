@@ -137,6 +137,26 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
             tied_positions.add(i + 1)
         i = j
 
+    made_cut_positions = {}
+    mc_tied_positions = set()
+    if made_cut:
+        mc_sorted = sorted(
+            [(n, players[n]) for n in made_cut if players[n].get("score") not in ("WD", "DQ", None, "")],
+            key=lambda x: (_score_key(x[1].get("score", "")), int(x[1].get("order", 9999)))
+        )
+        i = 0
+        while i < len(mc_sorted):
+            score = _score_key(mc_sorted[i][1].get("score", ""))
+            j = i
+            while j < len(mc_sorted) and _score_key(mc_sorted[j][1].get("score", "")) == score:
+                j += 1
+            is_tied = (j - i) > 1
+            for k in range(i, j):
+                made_cut_positions[mc_sorted[k][0]] = i + 1
+            if is_tied:
+                mc_tied_positions.add(i + 1)
+            i = j
+
     results = []
     for entry in picks_list:
         score = 0
@@ -171,9 +191,10 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
                 detail["points"] = mc_points
                 detail["result"] = "Missed Cut"
             else:
-                pos = positions.get(player_name, mc_points)
+                pos = made_cut_positions.get(player_name, mc_points)
                 detail["points"] = pos
-                detail["result"] = f"T{pos}" if pos else str(pos)
+                prefix = "T" if pos in mc_tied_positions else ""
+                detail["result"] = f"{prefix}{pos}" if pos else str(pos)
 
             if is_captain:
                 detail["points"] *= captain_mul
@@ -230,9 +251,10 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
                 detail["points"] = mc_points
                 detail["result"] = "Missed Cut"
             else:
-                pos = positions.get(captain_name, mc_points)
+                pos = made_cut_positions.get(captain_name, mc_points)
                 detail["points"] = pos
-                detail["result"] = f"T{pos}" if pos else str(pos)
+                prefix = "T" if pos in mc_tied_positions else ""
+                detail["result"] = f"{prefix}{pos}" if pos else str(pos)
 
             detail["points"] *= captain_mul
             score += detail["points"]
