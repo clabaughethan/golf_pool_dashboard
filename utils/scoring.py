@@ -157,6 +157,13 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
                 mc_tied_positions.add(i + 1)
             i = j
 
+    current_round = leaderboard.get("round", 1)
+    all_r2_done = all(
+        any(r["number"] == 2 and r.get("complete") for r in p.get("rounds", []))
+        for p in players.values() if p.get("score") not in ("WD", "DQ", None, "")
+    )
+    cut_determined = len(made_cut) > 0 and (current_round > 2 or all_r2_done)
+
     results = []
     for entry in picks_list:
         score = 0
@@ -166,8 +173,6 @@ def calculate_pool_scores(picks_list, leaderboard, rules=None):
         wp = entry["win_picks"]
         all_win = wp.values() if isinstance(wp, dict) else wp
         flat_win = [p for group in all_win for p in (group if isinstance(group, list) else [group])]
-
-        cut_determined = leaderboard.get("round", 1) > 2 and len(made_cut) > 0
 
         for player_name in flat_win:
             player_data = players.get(player_name)
